@@ -8,5 +8,6 @@
 - search：广度/深度优先搜索
 - backtracking：回溯算法
 - dynamic：动态规划
+    - knapsack：背包问题
 - GANs：各种经典GAN
 - greedy：贪心算法
