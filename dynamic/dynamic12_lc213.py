@@ -17,6 +17,9 @@ def rob(nums):
     """
 
     def roblist(nums):
+        """
+            这个就跟198题是一样的了, 只不过这里写法不同而已
+        """
         dp = [0 for _ in range(len(nums))]
         dp[0] = nums[0]
         for i in range(1, len(nums)):

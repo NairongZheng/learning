@@ -17,8 +17,8 @@ def numIslands(grid):
     for i in range(row):
         for j in range(col):
             if grid[i][j] == '1':
-                grid[i][j] = '0'      # 找到岛屿就把他变成水
-                queue.append((i, j))
+                grid[i][j] = '0'        # 找到岛屿就把他变成水
+                queue.append((i, j))    # 然后再把以他周围的岛屿都变成水
                 while queue:
                     cur_i, cur_j = queue.pop(0)
                     for x, y in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
