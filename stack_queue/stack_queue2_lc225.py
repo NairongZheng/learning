@@ -1,6 +1,8 @@
 from collections import deque
 class MyStack:
-
+    """
+        用两个队列实现一个栈
+    """
     def __init__(self):
         self.queue1 = deque()
         self.queue2 = deque()

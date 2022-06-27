@@ -81,7 +81,7 @@ def quick_sort3(nums, startIdx, endIdx):    # nums：要排序的列表，startI
 
 
 # sorted_list1 = quick_sort([3, 2, 1, 9, 6, 5, 4], 0, 6)
-sorted_list1 = quick_sort([1], 0, 0)
+sorted_list1 = quick_sort([5,2,3,1,4], 0, 4)
 print(sorted_list1)
 
 # sorted_list2 = quick_sort2([3, 2, 1, 9, 6, 5, 4])

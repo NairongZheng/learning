@@ -1,6 +1,6 @@
 """
     author:damonzheng
-    function:选择排序
+    function:选择排序：第一次遍历n-1个数找到最小的与第一个替换，第二次遍历n-2个数，如此循环
     date:2022.4.23
 """
 
