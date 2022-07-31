@@ -37,4 +37,4 @@ def eraseOverlapIntervals(intervals):
     # return len(intervals) - count
 
 aaa = eraseOverlapIntervals([[1,2],[2,3],[3,4],[1,3]])
-print(aaa)
+print(aaa)          # 1

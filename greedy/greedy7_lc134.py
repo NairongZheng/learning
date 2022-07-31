@@ -20,4 +20,4 @@ def canCompleteCircuit(gas, cost):
     return start
 
 aaa = canCompleteCircuit([1,2,3,4,5], [3,4,5,1,2])
-print(aaa)
+print(aaa)          # 3

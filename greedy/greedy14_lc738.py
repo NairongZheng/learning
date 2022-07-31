@@ -23,4 +23,4 @@ def monotoneIncreasingDigits(n):
     return int(''.join(a))
 
 aaa = monotoneIncreasingDigits(326)
-print(aaa)
+print(aaa)      # 299
