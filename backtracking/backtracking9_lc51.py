@@ -12,6 +12,7 @@ def solveNQueens(n):
     result = []
 
     def isVaild(board, row, col):
+        # 在单层搜索的过程中，每一层递归，只会选for循环（也就是同一行）里的一个元素，所以不用去重了。
 
         # 判断同一列是否冲突
         for i in range(len(board)):
@@ -38,7 +39,7 @@ def solveNQueens(n):
 
         return True
 
-    def backtracking(board, row, n):
+    def backtracking(board, row, n):        # 递归的深度就是row，控制棋盘的行
         if row == n:
             temp_result = []
             for temp in board:
@@ -46,7 +47,7 @@ def solveNQueens(n):
                 temp_result.append(temp_str)
             result.append(temp_result)
         
-        for col in range(0, n):
+        for col in range(0, n):             # 每层for循环控制棋盘的列。一行一列确定了放值皇后的位置。每次都是要从新的一行的起始位置开始搜，所以都是从0开始。
             if not isVaild(board, row, col):
                 continue
             board[row][col] = 'Q'
