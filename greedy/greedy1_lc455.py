@@ -33,4 +33,4 @@ def findContentChildren(g, s):
     return result
 
 aaa = findContentChildren([1,2,3],[1,1])
-print(aaa)
+print(aaa)          # 1

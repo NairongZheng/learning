@@ -22,5 +22,5 @@ def canJump(nums):
         i += 1
     return False
 
-aaa = canJump([2,3,1,1,4])
-print(aaa)
+aaa = canJump([3,2,1,0,4])
+print(aaa)      # False
