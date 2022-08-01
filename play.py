@@ -1,16 +1,15 @@
-def merge(intervals):
-    """
-    :type intervals: List[List[int]]
-    :rtype: List[List[int]]
-    """
-    intervals.sort(key=lambda x: (x[0], x[1]))
-    stack = [intervals[-1]]
-    for i in range(len(intervals) -2, -1, -1):
-        if stack[-1][0] <= intervals[i][1]:
-            cur = stack.pop()
-            stack.append([intervals[i][0], cur[1]])
-        else:
-            stack.append(intervals[i])
-    return stack
 
-aaa = merge([[1,4],[2,3]])
+def knapsack(bag_size, weight, value):
+    
+    dp = [0 for _ in range(bag_size + 1)]
+    for i in range(len(weight)):
+        for j in range(bag_size, weight[i] - 1, -1):
+            dp[j] = max(dp[j], dp[j - weight[i]] + value[i])
+    pass
+
+
+if __name__ == '__main__':
+    bag_size = 4
+    weight = [1, 3, 4]
+    value = [15, 20, 30]
+    knapsack(bag_size, weight, value)
