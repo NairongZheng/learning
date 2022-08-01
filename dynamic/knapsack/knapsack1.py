@@ -38,7 +38,7 @@ def knapsack(bag_size, weight, value):
                 dp[i][j] = dp[i - 1][j]     # 所以不装当前物品
             else:
                 dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - cur_weight] + cur_value)
-    print(dp)
+    print(dp)       # [[0, 15, 15, 15, 15], [0, 15, 15, 20, 35], [0, 15, 15, 20, 35]]
 
 if __name__ == '__main__':
     bag_size = 4

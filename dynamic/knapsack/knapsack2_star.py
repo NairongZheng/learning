@@ -32,6 +32,6 @@ def knapscak():
         for j in range(bag_weight, weight[i] - 1, -1):
             # 递推公式
             dp[j] = max(dp[j], dp[j - weight[i]] + value[i])
-    print(dp)
+    print(dp)           # [0, 15, 15, 20, 35]
 
 knapscak()
