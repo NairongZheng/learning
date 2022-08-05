@@ -19,5 +19,5 @@ def IsPopOrder(pushV, popV):
 
 aaa = IsPopOrder([1,2,3,4,5],[4,5,3,2,1])
 bbb = IsPopOrder([1,2,3,4,5],[4,3,5,1,2])
-print(aaa)
-print(bbb)
+print(aaa)      # True
+print(bbb)      # False
