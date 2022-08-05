@@ -43,4 +43,4 @@ def subarraysWithKDistinct(nums, k):
     return leK(nums, k) - leK(nums, k - 1)
 
 aaa = subarraysWithKDistinct([1,2,1,2,3], 2)
-print(aaa)
+print(aaa)      # 7

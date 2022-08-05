@@ -26,5 +26,5 @@ def lowestCommonAncestor(root, p, q):
     if left and right:
         return root
     if left:
-        return right
-    return left
+        return left
+    return right
