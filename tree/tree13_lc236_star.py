@@ -14,7 +14,7 @@ def lowestCommonAncestor(root, p, q):
     # 1. 确定递归函数返回值以及参数
     #       需要递归函数返回值，来告诉我们是否找到节点q或者p，那么返回值为bool类型就可以了。但我们还要返回最近公共节点
     # 2. 确定终止条件：如果找到了 节点p或者q，或者遇到空节点，就返回。
-    # 3. 确定单层递归逻辑：!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!看看博客吧
+    # 3. 确定单层递归逻辑：!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!看看博客吧，注意看那个图好好理解
     #       值得注意的是 本题函数有返回值，是因为回溯的过程需要递归函数的返回值做判断，但本题我们依然要遍历树的所有节点。
     #       在递归函数有返回值的情况下：
     #       1. 如果要搜索一条边，递归函数返回值不为空的时候，立刻返回，
@@ -23,7 +23,7 @@ def lowestCommonAncestor(root, p, q):
         return root
     left = lowestCommonAncestor(root.left, p, q)
     right = lowestCommonAncestor(root.right, p, q)
-    if left and right:
+    if left and right:      # 如果left 和 right都不为空，说明此时root就是最近公共节点。
         return root
     if left:
         return left
