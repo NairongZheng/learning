@@ -16,7 +16,7 @@ def longestCommonSubsequence(text1, text2):
                 dp[i][j] = dp[i - 1][j - 1] + 1
             else:
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
-    return dp[-1][-1]
+    return dp[-1][-1]       # dp: [[0, 0, 0, 0], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 2, 2], [0, 1, 2, 3]]
 
 aaa = longestCommonSubsequence('abcde', 'ace')
-print(aaa)
+print(aaa)      # 3

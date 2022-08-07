@@ -1,19 +1,13 @@
-class Solution:
-    def deleteNode(self, root, key):
-        if not root:
-            return None
-        if root.val < key:
-            root.right = self.deleteNode(root.right, key)
-        elif root.val > key:
-            root.left = self.deleteNode(root.left, key)
-        else:
-            if not root.left:
-                return root.right
-            if not root.right:
-                return root.left
-            node = root.right
-            while node.left:
-                node = node.right
-            node.left = root.left
-            root = root.right
-        return root
+def getRow(rowIndex):
+    results = [[1]]
+    for i in range(1, rowIndex + 1):
+        result = []
+        for j in range(i + 1):
+            if j == 0 or j == i:
+                result.append(1)
+            else:
+                result.append(results[-1][j - 1] + results[-1][j])
+        results.append(result)
+    return results[-1]
+
+aaa = getRow(3)
