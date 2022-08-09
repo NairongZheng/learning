@@ -17,4 +17,6 @@ def minimumTotal(triangle):
     return min(dp[-1])
 
 aaa = minimumTotal([[2],[3,4],[6,5,7],[4,1,8,3]])
-print(aaa)
+print(aaa)          # 11
+
+# dp: [[[2, 0, 0, 0], [5, 6, 0, 0], [11, 10, 13, 0], [15, 11, 18, 16]]]
