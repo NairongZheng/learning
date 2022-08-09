@@ -20,3 +20,8 @@ def maximalSquare(matrix):
                 dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1    # 这个转移方程看lc1227的推导
     result = max(max(row) for row in dp)
     return result ** 2
+
+aaa = maximalSquare([["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]])
+print(aaa)      # 4
+
+# dp: [[1, 0, 1, 0, 0], [1, 0, 1, 1, 1], [1, 1, 1, 2, 2], [1, 0, 0, 1, 0]]
