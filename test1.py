@@ -1,13 +1,12 @@
-def getRow(rowIndex):
-    results = [[1]]
-    for i in range(1, rowIndex + 1):
-        result = []
+def longestPalindrome(s):
+    result = ''
+    for i in range(len(s)):
         for j in range(i + 1):
-            if j == 0 or j == i:
-                result.append(1)
-            else:
-                result.append(results[-1][j - 1] + results[-1][j])
-        results.append(result)
-    return results[-1]
+            str_ = s[j:i + 1]
+            if str_ == str_[::-1] and len(str_) > len(result):
+                result = str_
+    return result
 
-aaa = getRow(3)
+
+aaa = longestPalindrome('babad')
+print(aaa)
