@@ -21,6 +21,7 @@ class MedianFinder:
         self.small_heap = []    # 小根堆，放右边的值
         self.big_heap = []      # 大根堆，放左边的值
         self.count = 0
+        
 
     def addNum(self, num: int):
         self.count += 1
