@@ -56,7 +56,7 @@
 #         return result
 
 
-# 解法二：用堆(不会)
+# 解法二：用堆(不会)(看看heap7里面的讲解)
 class Solution:
     def maxSlidingWindow(self, nums, k):
         import heapq
