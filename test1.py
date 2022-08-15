@@ -1,41 +1,22 @@
+def floodFill(image, sr, sc, color):
+    
+    m = len(image)
+    n = len(image[0])
 
-import heapq
-class MedianFinder:
+    stack = [(sr, sc)]
+    target = image[sr][sc]
+    while stack:
+        n = len(stack)
+        for _ in range(n):
+            cur_i, cur_j = stack.pop(0)
+            image[cur_i][cur_j] = color
+            for x, y in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                temp_i = cur_i + x
+                temp_j = cur_j + y
+                if 0 <= temp_i < m and 0 <= temp_j < n and image[temp_i][temp_j] == target:
+                    image[temp_i][temp_j] = color
+                    stack.append((temp_i, temp_j))
+    return image
 
-    def __init__(self):
-        self.small_heap = []
-        self.big_heap = []
-        self.count = 0
-
-    def addNum(self, num: int):
-        self.count += 1
-        heapq.heappush(self.big_heap, -num)
-        max_num = -heapq.heappop(self.big_heap)
-        heapq.heappush(self.small_heap, max_num)
-
-        if len(self.big_heap) < len(self.small_heap):
-            min_num = heapq.heappop(self.small_heap)
-            heapq.heappush(self.big_heap, -min_num)
-
-
-    def findMedian(self):
-        if self.count % 2 == 1:
-            max_num = -self.big_heap[0]
-            return max_num
-        else:
-            left = -self.big_heap[0]
-            right = self.small_heap[0]
-            return (left + right) / 2
-
-
-# Your MedianFinder object will be instantiated and called as such:
-# obj = MedianFinder()
-# obj.addNum(num)
-# param_2 = obj.findMedian()
-
-aaa = MedianFinder()
-aaa.addNum(1)
-aaa.addNum(2)
-print(aaa.findMedian())     # 1.5
-aaa.addNum(3)
-print(aaa.findMedian())     # 2
+aaa = floodFill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2)
+print(aaa)
