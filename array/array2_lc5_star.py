@@ -15,6 +15,7 @@ def longestPalindrome(s):
     def palindrome(s, l, r):
         """
             在s中搜索以s[l]和s[r]为中心的最长回文串
+            看函数要注意看定义！！！！！！！！！！！！！！！！！！多读几遍定义
         """
         while l >= 0 and r < len(s) and s[l] == s[r]:
             l -= 1      # 双指针，向两边展开
