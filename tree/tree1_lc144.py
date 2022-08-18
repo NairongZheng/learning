@@ -1,18 +1,26 @@
 """
     二叉树的前序遍历
+    (中左右)
 """
 
 # Definition for a binary tree node.
+from unittest import result
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 class Solution:
-    def preorderTraversal(self, root):
-        # 前序遍历(中左右)
 
-        # 递归法
+    def preorderTraversal(self, root):
+
+        # 递归法(思路二：分解问题)
+        # 一棵二叉树的前序遍历结果 = 根节点 + 左子树的前序遍历结果 + 右子树的前序遍历结果。
+        # 见参考链接
+
+        # 递归法(思路一：遍历)
         result = []
         def traversal(root):
             if not root:    # 递归结束条件：遇到空节点就返回
