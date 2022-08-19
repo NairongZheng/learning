@@ -1,5 +1,9 @@
 # array数组或者字符串
-[参考链接](https://labuladong.github.io/algo/2/20/23/)
+- [参考链接](https://labuladong.github.io/algo/2/20/23/)
+- sliding_window：滑动窗口
+- binary_srarch：二分查找
+- sorting：排序相关算法
+
 1. 删除有序数组中的重复项
 2. 最长回文子串
 3. 区域和检索 - 数组不可变
