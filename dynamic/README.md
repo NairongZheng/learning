@@ -1,5 +1,9 @@
 # dynamic动态规划
 - [参考链接](https://github.com/youngyangyang04/leetcode-master)
+- 1：爬楼梯
+- 2：使用最小花费爬楼梯
+- 3：不同路径
+- 4：不同路径II
 - 5：整数拆分
 - 7：最长递增子序列
 - 8：最长连续递增序列
