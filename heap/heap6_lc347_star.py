@@ -9,6 +9,9 @@ def topKFrequent(nums, k):
     """
         
     # 堆, 时间复杂度为O(nlogk)
+    # 用最小堆，那么最终堆中的k个值就是出现最多的k个值
+    # 或者可以用最大堆，但是最大堆就要把所有数字都放进去，然后弹出k次
+    # 下面用最小堆实现
     from collections import Counter
     import heapq
     adict = Counter(nums)
