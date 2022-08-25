@@ -57,7 +57,7 @@ class Solution:
         headA.next = self.reverseKGroup(headB, k)       # 递归反转后序链表并连接起来
         return newHead
     
-    def print(self, head):
+    def listnode_print(self, head):
         """
             打印看看
         """
@@ -82,22 +82,22 @@ aaa = Solution()
 
 # 打印链表
 node1 = aaa.build_listnode()
-aaa.print(node1)        # [1, 2, 3, 4, 5]
+aaa.listnode_print(node1)        # [1, 2, 3, 4, 5]
 
 # 反转链表
 node1 = aaa.build_listnode()
 reverseList_head = aaa.reverseList(node1)
-aaa.print(reverseList_head)     # [5, 4, 3, 2, 1]
+aaa.listnode_print(reverseList_head)     # [5, 4, 3, 2, 1]
 
 # 反转a到b之间（其实不是）
 node1, node2, node3 = ListNode(1), ListNode(2), ListNode(3)
 node4, node5 = ListNode(4), ListNode(5)
 node1.next, node2.next, node3.next, node4.next = node2, node3, node4, node5
 reverseBetween_head = aaa.reverseBetween(node1, node3)
-aaa.print(reverseBetween_head)      # [2, 1]
+aaa.listnode_print(reverseBetween_head)      # [2, 1]
 
 # k个一组反转
 node1 = aaa.build_listnode()
 reverseKGroup_head = aaa.reverseKGroup(node1, 2)
-aaa.print(reverseKGroup_head)      # [2, 1, 4, 3, 5]
+aaa.listnode_print(reverseKGroup_head)      # [2, 1, 4, 3, 5]
 
