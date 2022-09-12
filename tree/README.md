@@ -1,5 +1,6 @@
 # tree树相关问题
 看看这个[超神链接](https://www.bilibili.com/video/BV1nG411x77H)
+0. acm模式构建二叉树
 1. 二叉树的前序遍历
 2. 二叉树的中序遍历
 3. 二叉树的后序遍历
