@@ -65,3 +65,80 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
+"""
+    function:非极大值抑制
+    date:2022.9.27
+    不用numpy实现
+"""
+def nms(points, threshold):
+
+    # 1. 计算每个矩形框的面积
+    x1 = [point[0] for point in points]
+    y1 = [point[1] for point in points]
+    x2 = [point[2] for point in points]
+    y2 = [point[3] for point in points]
+    scores = [point[4] for point in points]
+    # areas = list(map(lambda point: (point[2] - point[0] + 1) * (point[3] - point[1] + 1), points))
+    areas = [(x2_ - x1_ + 1) * (y2_ - y1_ + 1) for (x1_, y1_, x2_, y2_) in zip(x1, y1, x2, y2)]
+    
+    # 2. 获得每个矩形框的下标（经过倒序的）
+    order = list(zip(scores, range(len(scores))))
+    order = sorted(order, key=lambda order:order[0], reverse=True)
+    order = [x[1] for x in order]
+
+    # 3. 开始nms
+    remain_points = []
+    while len(order) > 0:
+        i = order[0]
+        remain_points.append(i)
+
+        # 计算相交部分的面积x1[order[1:]]
+
+        xx1 = [max(a1, a2) for (a1, a2) in zip([x1[i] for _ in range(len(order) - 1)], [x1[j] for j in order[1:]])]
+        yy1 = [max(a1, a2) for (a1, a2) in zip([y1[i] for _ in range(len(order) - 1)], [y1[j] for j in order[1:]])]
+        xx2 = [min(a1, a2) for (a1, a2) in zip([x2[i] for _ in range(len(order) - 1)], [x2[j] for j in order[1:]])]
+        yy2 = [min(a1, a2) for (a1, a2) in zip([y2[i] for _ in range(len(order) - 1)], [y2[j] for j in order[1:]])]
+
+        # w = list(map(lambda x2, x1: (x2 - x1 + 1), xx2, xx1))
+        w = [(x2 - x1 + 1) for (x1, x2) in zip(xx1, xx2)]
+        w = [max(0, x) for x in w]
+        # h = list(map(lambda y2, y1: (y2 - y1 + 1), yy2, yy1))
+        h = [(y2 - y1 + 1) for (y1, y2) in zip(yy1, yy2)]
+        h = [max(0, x) for x in h]
+
+        inter = [x * y for (x, y) in zip(w, h)]
+
+        iou = [inter_ / (area1 + area2 - inter_) for (inter_, area1, area2) in zip(inter, [areas[i] for _ in range(len(order) - 1)], [areas[j] for j in order[1:]])]
+        
+        ious = list(zip(iou, range(len(iou))))
+        inds = []
+        for aaa in ious:
+            if aaa[0] < threshold:
+                inds.append(aaa[1] + 1)
+        
+        new_order = []
+        for i in range(len(inds)):
+            new_order.append(order[inds[i]])
+        order = new_order
+    return remain_points
+
+
+def main():
+    points = [[30, 20, 230, 200, 1], 
+            [50, 50, 260, 220, 0.9], 
+            [210, 30, 420, 5, 0.8], 
+            [430, 280, 460, 360, 0.7]]
+    
+    threshold = 0.35
+    remain_points = nms(points, threshold)
+    print(remain_points)
+    for i in remain_points:
+        print(points[i])
+
+
+if __name__ == '__main__':
+    main()
