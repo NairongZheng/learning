@@ -18,6 +18,7 @@ class Solution:
             left_depth = get_depth(node.left)
             right_depth = get_depth(node.right)
 
+            # 后序位置
             if node.left is None and node.right is not None:
                 return 1 + right_depth      # 如果左子树为空，右子树不为空，说明最小深度是 1 + 右子树的深度。
             if node.left is not None and node.right is None:

@@ -29,6 +29,8 @@ class Solution:
                 return True
             if not root.left and not root.right:                        # 遇到叶子节点，计数不为0
                 return False
+            
+            # 这边放在回溯那边就是for遍历，不过二叉树只有“二叉”，所以分开写。对比一下回溯那边就知道了
             if root.left:
                 target_sum -= root.left.val
                 if isornot(root.left, target_sum):
