@@ -54,9 +54,19 @@ class Solution:
         # return root
 
         # # 递归：前序遍历(思路一：遍历)
+        # # 这么写
         # if not root:
         #     return None
         # root.left, root.right = root.right, root.left
         # self.invertTree(root.left)
         # self.invertTree(root.right)
+        # return root
+        # # 或者这么写
+        # def traverse(root):
+        #     if not root:
+        #         return None
+        #     root.left, root.right = root.right, root.left
+        #     traverse(root.left)
+        #     traverse(root.right)
+        # traverse(root)
         # return root

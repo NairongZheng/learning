@@ -30,6 +30,8 @@ class Solution:
             right_height = get_height(root.right)
             if right_height == -1:
                 return -1
+            
+            # 后序位置
             if abs(left_height - right_height) > 1:
                 result = -1
             else:
