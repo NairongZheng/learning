@@ -19,12 +19,23 @@ def lowestCommonAncestor(root, p, q):
     #       在递归函数有返回值的情况下：
     #       1. 如果要搜索一条边，递归函数返回值不为空的时候，立刻返回，
     #       2. 如果搜索整个树，直接用一个变量left、right接住返回值，这个left、right后序还有逻辑处理的需要，也就是后序遍历中处理中间节点的逻辑（也是回溯）。
+
+
+    # 看这个思路https://www.cnblogs.com/labuladong/p/13976582.html
+    
+    # base case
     if not root or root == p or root == q:
         return root
+
+    # 递归
     left = lowestCommonAncestor(root.left, p, q)
     right = lowestCommonAncestor(root.right, p, q)
-    if left and right:      # 如果left 和 right都不为空，说明此时root就是最近公共节点。
+
+
+    if left and right:      # 情况一：如果left 和 right都不为空，说明此时root就是最近公共节点。
         return root
-    if left:
+    if left is None and right is None:                # 情况二：都为None，返回None
         return left
-    return right
+    return left if left else right             # 情况三：哪个非空就返回哪个
+
+    # # 情况二其实可以跟情况三合并（情况二删了也可以）：

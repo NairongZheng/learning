@@ -1,5 +1,7 @@
 """
     删除二叉搜索树中的节点
+
+    答案不是唯一的，另一个可以参考https://labuladong.github.io/algo/2/21/43/
 """
 
 # Definition for a binary tree node.
