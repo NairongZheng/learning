@@ -1,6 +1,8 @@
 
 
 # acm模式构建二叉树
+# 注意：层序遍历，且，“完全二叉树”保存（没有的用null之类的表示）的，才可以用这个。
+# 具体区别可以看看tree22
 
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
