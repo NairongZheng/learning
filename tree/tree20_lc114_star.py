@@ -23,13 +23,16 @@ class Solution:
         # 1. 先利用 flatten(x.left) 和 flatten(x.right) 将 x 的左右子树拉平。
         # 2. 将 x 的右子树接到左子树下方，然后将整个左子树作为右子树。
         # 这样，以 x 为根的整棵二叉树就被拉平了，恰好完成了 flatten(x) 的定义。
+
+        # base case
         if not root:
             return
+        
+        # 利用定义，把左右子树拉平
         self.flatten(root.left)
         self.flatten(root.right)
 
         # 后序遍历位置(去看看参考链接的图)
-
         # 左右子树已经被拉平成一条链表
         left = root.left
         right = root.right
