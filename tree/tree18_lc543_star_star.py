@@ -1,9 +1,12 @@
+# 顺便把tree23看了
 """
     二叉树的直径
     给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。
 
     建议看看参考链接
 """
+
+import tree0
 # Definition for a binary tree node.
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -25,9 +28,13 @@ class Solution:
                 return 0
             left_max = max_depth(root.left)
             right_max = max_depth(root.right)
+
+            ###############################顺便做的，不是本来这个函数实现的功能###########################
             # 后序位置。后序位置可以接收到子树的返回值，就不用向下对每个节点又用一次递归函数去算它的深度了
             my_diameter = left_max + right_max
-            self.max_diameter = max(self.max_diameter, my_diameter)
+            self.max_diameter = max(self.max_diameter, my_diameter)     # 后序遍历位置顺便计算最大直径
+            #############################################################################################
+
             return max(left_max, right_max) + 1
         max_depth(root)
         return self.max_diameter
@@ -57,3 +64,15 @@ class Solution:
 
         # traverse(root)
         # return self.max_diameter
+
+
+nums = [1, 2, 3, 4, 5, 'null', 'null']
+root = tree0.construct_binary_tree(nums, 0)
+
+aaa = Solution()
+bbb = aaa.diameterOfBinaryTree(root)
+print(bbb)          # 3 ([4,2,1,3]或者[5,2,1,3])
+
+#           1
+#       2       3
+#    4    5

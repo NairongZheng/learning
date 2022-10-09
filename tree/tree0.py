@@ -14,7 +14,7 @@ class TreeNode:
 def construct_binary_tree(nums, index):
     if index >= len(nums):
         return
-    if nums[index] == nullnum:     # 'null'的时候
+    if nums[index] == 'null':     # 'null'的时候
         return None
     left = index * 2 + 1
     right = index * 2 + 2
@@ -35,11 +35,9 @@ def preorderTraversal(root):        # 前序遍历
     traversal(root)
     return result
 
-
-nums = [3, 9, 20, 'null', 'null', 15, 7]
-nullnum = 'null'
-print("输入数组为：", nums)                         # 输入数组为： [3, 9, 20, 'null', 'null', 15, 7]
-print("{}代表空节点".format(nullnum))               # null代表空节点
-root = construct_binary_tree(nums, 0)
-print("二叉树已生成")
-print('中序遍历结果：', preorderTraversal(root))    # 中序遍历结果： [3, 9, 20, 15, 7]
+if __name__ == '__main__':
+    nums = [3, 9, 20, 'null', 'null', 15, 7]
+    print("输入数组为：", nums)                         # 输入数组为： [3, 9, 20, 'null', 'null', 15, 7]
+    root = construct_binary_tree(nums, 0)
+    print("二叉树已生成")
+    print('中序遍历结果：', preorderTraversal(root))    # 中序遍历结果： [3, 9, 20, 15, 7]
