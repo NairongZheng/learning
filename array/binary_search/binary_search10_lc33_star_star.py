@@ -9,7 +9,7 @@ def search(nums, target):
     """
     left = 0
     right = len(nums) - 1
-    while left <= right:
+    while left <= right:            # 注意这边用的是小于等于，要按照实际情况来的
         mid = (left + right) // 2
         if nums[mid] == target:
             return mid
@@ -25,5 +25,6 @@ def search(nums, target):
                 right = mid - 1
     return -1
 
-aaa = search([4,5,6,7,0,1,2], 0)
-print(aaa)
+
+aaa = search([4, 5, 6, 7, 0, 1, 2], 0)
+print(aaa)      # 4
