@@ -16,5 +16,5 @@ def findMin(nums):
             right = mid
     return nums[left]
 
-aaa = findMin([3, 5, 4, 1, 2])
+aaa = findMin([3, 5, 4, 1, 2])      # 1
 print(aaa)
