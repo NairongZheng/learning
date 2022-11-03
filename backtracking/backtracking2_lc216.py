@@ -31,4 +31,4 @@ def combinationSum3(k, n):
     return result
 
 aaa = combinationSum3(3, 9)
-print(aaa)
+print(aaa)      # [[1, 2, 6], [1, 3, 5], [2, 3, 4]]

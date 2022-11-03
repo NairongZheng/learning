@@ -30,7 +30,7 @@ class Solution:
         for _ in range(left - 1):
             pre = pre.next
         
-        # 第二部：来到right节点
+        # 第二步：来到right节点
         right_node = pre
         for _ in range(right - left + 1):
             right_node = right_node.next

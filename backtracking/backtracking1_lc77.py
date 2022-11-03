@@ -25,4 +25,4 @@ def combine(n, k):
     return result
 
 aaa = combine(4, 2)
-print(aaa)
+print(aaa)      # [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]
