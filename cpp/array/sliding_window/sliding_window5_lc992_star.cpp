@@ -41,8 +41,6 @@ int subarraysWithKDistinct(vector<int> &nums, int k)
     return leK(nums, k) - leK(nums, k - 1);
 }
 
-
-
 int main()
 {
     vector<int> nums = {1, 2, 1, 2, 3};
