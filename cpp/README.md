@@ -10,3 +10,30 @@
 8. array-array4：二维vector的初始化及使用
 9. array-array7：vector的初始化！
 10. listnode-listnode1：链表
+11. tree-tree1：树
+
+
+```cpp
+// 链表定义
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+```
+
+```cpp
+// 树定义
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+```
