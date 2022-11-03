@@ -3,7 +3,7 @@
 # 定长的滑动窗口
 def strStr(haystack, needle):
     """
-        实现strStr()
+        实现strStr()/找出字符串中第一个匹配项的下标
     """
     start = 0
     for end in range(len(needle) - 1, len(haystack)):   # 这是一个定长的窗口(28和567都是定长)

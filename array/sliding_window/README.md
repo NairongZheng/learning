@@ -2,7 +2,7 @@
 [参考链接](https://www.bilibili.com/video/BV1eL411n7YS)
 
 0. 无重复字符的最长子串
-1. 实现strStr()
+1. 实现strStr()/找出字符串中第一个匹配项的下标
 2. 判断s2是否包含s1的排列
 3. 长度最小的子数组
 4. 水果成篮

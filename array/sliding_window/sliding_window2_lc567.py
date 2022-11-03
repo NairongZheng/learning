@@ -7,9 +7,9 @@ def checkInclusion(s1, s2):
     """
     from collections import Counter
     start = 0
-    template = Counter(s1)
+    s1_dict = Counter(s1)
     for end in range(len(s1) - 1, len(s2)):     # 这种写法可以自动更新end, 我们只要考虑什么时候更新start就可以
-        if Counter(s2[start:end+1]) == template:
+        if Counter(s2[start:end+1]) == s1_dict:
             return True
         start += 1              # 不等于的话就要找下一个窗口继续判断
     return False
