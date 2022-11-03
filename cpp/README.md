@@ -6,6 +6,7 @@
 4. array-sliding_window-sliding_window0：无穷大无穷小怎么表示(INT_MIN)，set的使用
 5. array-sliding_window-sliding_window1：字符串取子串
 6. array-sliding_window-sliding_window4：map/unordered_map的定义，删除
-7. array-array3：类的定义及使用
+7. array-array3：类的定义及使用(也可以看看backtracking1)
 8. array-array4：二维vector的初始化及使用
 9. array-array7：vector的初始化！
+10. listnode-listnode1：链表
