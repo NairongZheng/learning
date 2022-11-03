@@ -4,14 +4,14 @@
 */
 
 #include <iostream>
-#include <limits.h>
+#include <limits.h>     // 好像不用包含就可以用INT_MAX了
 #include <set>
 using namespace std;
 
 int lengthOfLongestSubstring(string s)
 {
     int start = 0;
-    int max_len = INT_MIN; // int无穷大用INT_MAX表示，无穷小用INT_MIN表示，要包含头文件limits.h
+    int max_len = INT_MIN; // int无穷大用INT_MAX表示，无穷小用INT_MIN表示
     set<int> mark;
     for (int end = 0; end < s.size(); end++)
     {
