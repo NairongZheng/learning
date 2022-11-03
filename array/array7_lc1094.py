@@ -13,7 +13,7 @@ def carPooling(trips, capacity):
     for trip in trips:
         val, i, j = trip
         diff[i] += val
-        if j < len(diff):               # 注意题目说的，从to就会下车，所以跟之前的题目不一样，不是在j+1的地方减，而实在j的地方
+        if j < len(diff):               # 注意题目说的，从to就会下车，所以跟之前的题目不一样，不是在j+1的地方减，而是在j的地方
             diff[j] -= val
     result = [0 for _ in range(len(diff))]      # 从差分数组逆推结果数组
     result[0] = diff[0]
