@@ -24,4 +24,4 @@ def minSubArrarLen(s, nums):
         return min_len
 
 aaa = minSubArrarLen(s=7, nums=[2,3,1,2,4,3])
-print(aaa)
+print(aaa)      # 2
