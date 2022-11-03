@@ -6,7 +6,6 @@
 
 #include <iostream>
 #include <vector>
-#include "listnode1_lc206.h"
 using namespace std;
 
 // Definition for singly-linked list.
@@ -22,6 +21,25 @@ struct ListNode
 class Solution
 {
 public:
+    ListNode *reverseList(ListNode *head)
+    {
+        if (head == NULL)
+        {
+            return NULL;
+        }
+        ListNode *temp;
+        ListNode *pre = NULL;
+        ListNode *cur = head;
+        while (cur)
+        {
+            temp = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = temp;
+        }
+        return pre;
+    }
+
     ListNode *reverseBetween(ListNode *head, int left, int right)
     {
         ListNode *dummy = new ListNode(0, head);
@@ -47,7 +65,12 @@ public:
         right_node->next = NULL;
 
         // 第四步：翻转链表
-        reverseList
+        reverseList(left_node);
+
+        // 第五步：接回原来的链表中
+        pre->next = right_node;
+        left_node->next = post;
+        return dummy->next;
     }
 };
 
@@ -82,6 +105,6 @@ int main()
     int right = 4;
     Solution *obj = new Solution();
     ListNode *reverse_head = obj->reverseBetween(node1, left, right);
-    printListNode(reverse_head); // 
+    printListNode(reverse_head); // 1 4 3 2 5
     return 0;
 }

@@ -4,14 +4,13 @@
 """
 
 # Definition for a binary tree node.
-from unittest import result
-
-
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
+
+
 class Solution:
 
     def preorderTraversal(self, root):
@@ -22,6 +21,7 @@ class Solution:
 
         # 递归法(思路一：遍历)
         result = []
+
         def traversal(root):
             if not root:    # 递归结束条件：遇到空节点就返回
                 return
@@ -49,6 +49,7 @@ class Solution:
         #         cur = stack.pop()
         #         result.append(cur.val)
         # return result
+
 
 # 构建一棵树
 #       5
