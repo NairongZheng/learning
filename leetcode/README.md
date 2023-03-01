@@ -1,0 +1,17 @@
+# leetcode
+- listnode：链表相关
+- search：广度/深度优先搜索
+- backtracking：回溯算法
+- dynamic：动态规划
+    - knapsack：背包问题
+- greedy：贪心算法
+- stack_queue：栈和队列
+- bit：位运算
+- other：其他题目
+- tree：树
+- heap：堆
+- array：数组
+    - sliding_window：滑动窗口
+    - binary_srarch：二分查找
+    - sorting：排序相关算法
+- cpp：c++版本
