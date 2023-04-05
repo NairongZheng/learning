@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>JsonFormatter</class>
+ <widget class="QDialog" name="JsonFormatter">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>727</width>
+    <height>533</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>JSON格式化小工具</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+font-size:16px;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>请输入粘贴JSON文本：</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="plainTextEdit_json"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_format">
+       <property name="text">
+        <string>格式化JSON</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_unformat">
+       <property name="text">
+        <string>反格式化JSON</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_copyjson">
+     <property name="text">
+      <string>复制JSON内容</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
