@@ -1,3 +1,6 @@
+"""
+    文本分类GPU版本：单机单卡
+"""
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,7 +15,6 @@ import sys
 import os
 import logging
 logging.basicConfig(level=logging.WARN, stream=sys.stdout, format="%(asctime)s (%(module)s:%(lineno)d) %(levelname)s: %(message)s")
-    
 
 VOCAB_SIZE = 15000
 
@@ -37,12 +39,12 @@ class GCNN(nn.Module):
 
         # 1. 通过word_index得到word_embedding
         # word_index shape:[bs, max_seq_len]
-        word_embbedding = self.embedding_table(word_index)      # [bs, max_seq_len, embedding_dim]
+        word_embedding = self.embedding_table(word_index)      # [bs, max_seq_len, embedding_dim]
 
         # 2. 编写第一层1D门卷积模块
-        word_embedding = word_embbedding.transpose(1, 2)        # [bs, embedding_dim, max_seq_len]
-        A = self.conv_A_1(word_embbedding)
-        B = self.conv_B_1(word_embbedding)
+        word_embedding = word_embedding.transpose(1, 2)        # [bs, embedding_dim, max_seq_len]
+        A = self.conv_A_1(word_embedding)
+        B = self.conv_B_1(word_embedding)
         H = A * torch.sigmoid(B)                                # [bs, 128, max_seq_len]
 
         A = self.conv_A_2(H)
@@ -114,11 +116,13 @@ def train(train_data_loader, eval_data_loader, model, optimizer, num_epoch, log_
     if resume != "":
         # 加载之前训练过的模型的参数文件
         logging.warning(f"loading from {resume}")
-        checkpoint = torch.load(resume)
+        checkpoint = torch.load(resume, map_location=torch.device("cpu"))   # 可以是cpu, cuda, cuda:index######################
         model.load_state_dict(checkpoint['optimizer_state_dict'])
         start_epoch = checkpoint['epoch']
         start_step = checkpoint['step']
     
+    model.cuda()        # 模型拷贝#########################
+
     for epoch_index in range(start_epoch, num_epoch):
         ema_loss = 0.
         num_batches = len(train_data_loader)
@@ -126,6 +130,10 @@ def train(train_data_loader, eval_data_loader, model, optimizer, num_epoch, log_
         for batch_index, (target, token_index) in enumerate(train_data_loader):
             optimizer.zero_grad()
             step = num_batches * epoch_index + batch_index + 1
+
+            token_index = token_index.cuda()        # 数据拷贝###############################
+            target = target.cuda()                  # 数据拷贝###############################
+
             logits = model(token_index)
             bce_loss = F.binary_cross_entropy(torch.sigmoid(logits), F.one_hot(target, num_classes=2).to(torch.float32))
             ema_loss = 0.9 * ema_loss + 0.1 * bce_loss
@@ -134,12 +142,16 @@ def train(train_data_loader, eval_data_loader, model, optimizer, num_epoch, log_
             optimizer.step()
 
             if step % log_step_interval == 0:
-                logging.warning(f"epoch_index: {epoch_index}, batch_index: {batch_index}, ema_loss: {ema_loss}")
+                logging.warning(f"epoch_index: {epoch_index}, batch_index: {batch_index}, ema_loss: {ema_loss.item()}")
             
             if step % save_step_interval == 0:
                 os.makedirs(save_path, exist_ok=True)
                 save_file = os.path.join(save_path, f"step_{step}.pt")
-                torch.save({'epoch': epoch_index, 'step': step, 'model_state_dict': model.state_dict(), 'loss': bce_loss,}, save_file)
+                torch.save({'epoch': epoch_index, 
+                            'step': step, 
+                            'model_state_dict': model.state_dict(), 
+                            'loss': bce_loss,
+                            }, save_file)
                 logging.warning(f"checkpoint bas been saved in {save_file}")
             
             if step % eval_step_interval == 0:
@@ -150,27 +162,44 @@ def train(train_data_loader, eval_data_loader, model, optimizer, num_epoch, log_
                 total_account = 0
                 for eval_batch_index, (eval_target, eval_token_index) in enumerate(eval_data_loader):
                     total_account += eval_target.shape[0]
-                    eval_logits = model(eval_batch_index)
+
+                    eval_token_index = eval_token_index.cuda()      # 数据拷贝###############################
+                    eval_target = eval_target.cuda()                # 数据拷贝###############################
+
+                    eval_logits = model(eval_token_index)
                     total_acc_account += (torch.argmax(eval_logits, dim=-1) == eval_target).sum().item()
                     eval_bce_loss = F.binary_cross_entropy(torch.sigmoid(eval_logits), F.one_hot(eval_target, num_classes=2).to(torch.float32))
                     ema_eval_loss = 0.9 * ema_eval_loss + 0.1 * eval_bce_loss
                 
-                logging.warning(f"eval_ema_loss: {ema_eval_loss}, eval_acc: {total_acc_account/total_account}")
+                acc = total_acc_account/total_account
+                logging.warning(f"eval_ema_loss: {ema_eval_loss.item()}, eval_acc: {acc}")
                 model.train()
 
 
-if __name__ == '__main__':
-    # model = GCNN()
-    model = TextClassificationModel()
+def main():
+    # 修改1######################
+    if torch.cuda.is_available():
+        logging.warning("Cuda is available!")
+        os.environ["CUDA_VISIBLE_DEVICE"] = "0"
+    else:
+        logging.warning("Cuda is not available! Exit!")
+        return
+    
+    model = GCNN()
+    # model = TextClassificationModel()
     print('模型总参数：', sum(p.numel() for p in model.parameters()))
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     train_data_iter = IMDB(root='.data', split='train')
-    train_data_loader = torch.utils.data.Dataloader(to_map_style_dataset(train_data_iter), batch_size=8, collate_fn=collate_fn, shuffle=True)
+    train_data_loader = torch.utils.data.DataLoader(to_map_style_dataset(train_data_iter), batch_size=BATCH_SIZE, collate_fn=collate_fn, shuffle=True)
 
     eval_data_iter = IMDB(root='.data', split='test')
-    eval_data_loader = torch.utils.data.Dataloader(to_map_style_dataset(eval_data_iter), batch_size=8, collate_fn=collate_fn)
+    eval_data_loader = torch.utils.data.DataLoader(to_map_style_dataset(eval_data_iter), batch_size=BATCH_SIZE, collate_fn=collate_fn)
     resume = ''
 
+    # train里修改2##########################
     train(train_data_loader, eval_data_loader, model, optimizer, num_epoch=10, log_step_interval=20, 
           save_step_interval=500, eval_step_interval=300, save_path='./logs_imdb_text_classification', resume=resume)
+
+if __name__ == '__main__':
+    main()
