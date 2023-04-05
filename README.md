@@ -4,3 +4,4 @@
 - GANs：各种经典GAN
 - leetcode：刷题
 - threading：多线程
+- ddp: pytorch分布式训练
