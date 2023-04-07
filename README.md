@@ -6,3 +6,4 @@
 - threading：多线程
 - ddp: pytorch分布式训练
 - pyqt：pyqt
+- html：html和css
