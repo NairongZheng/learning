@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            font-size: 100;
+            /* 提示css属性，单词的首字母 */
+            /* 很多，就不写了 */
+
+            /* 宽度300，高度200，背景色是粉色 */
+            /* w300+h200+bgc */
+            width: 300px;
+            height: 200px;
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+    <div></div>
+    <h1></h1>
+
+    <!-- 生成div带类名的 -->
+    <div class="box"></div>
+    <p class="box"></p>
+
+    <div id="box"></div>
+    <p id="box"></p>
+
+    <p class="red" id="one"></p>
+
+    <!-- div 同级 p + -->
+    <div></div>
+    <p></p>
+
+    <!-- 父子> -->
+    <div>
+        <p></p>
+    </div>
+
+    <ul>
+        <li></li>
+    </ul>
+
+    <!-- ul里有3个li * -->
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+
+    <!-- ul里面有li，li里面有字111，大括号里面写字 -->
+    <!-- ul>li{111}*3 -->
+    <ul>
+        <li>111</li>
+        <li>111</li>
+        <li>111</li>
+    </ul>
+
+    <!-- ul里面有3个li，li文字123 -->
+    <!-- ul>li{$}*3 -->
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+    </ul>
+
+    <ul><li></li></ul>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 块级元素 */
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: pink;
+
+            /* 转成行内块 */
+            /* display: inline-block; */
+
+            /* 转成行内 */
+            /* display: inline; */
+        }
+
+        /* 行内元素 */
+        span {
+            width: 100px;
+            height: 100px;
+            background-color: pink;
+
+            /* 转成行内块 */
+            /* display: inline-block; */
+
+            /* 转成块 */
+            /* display: block; */
+        }
+
+        /* 行内块元素 */
+        img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 块级元素 -->
+    <div>111</div>
+    <div>222</div>
+
+    <br><br>
+    <!-- 行内元素 -->
+    <span>span1</span>
+    <span>span2</span>
+
+    <br><br>
+    <!-- 行内块元素 -->
+    <img src="../img/car.jpg" alt="">
+    <img src="../img/car.jpg" alt="">
+
+    <!-- p和h标题不能相互嵌套（可以去浏览器打开检查看看） -->
+    <!-- <p>
+        <h1>一级标题</h1>
+    </p> -->
+
+
+
+</body>
+</html>
