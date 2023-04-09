@@ -5,7 +5,7 @@
 [综合案例——图片完成](https://www.bilibili.com/video/BV1Kg411T7t9?p=64)，见p64
 
 CSS写在style标签中，style标签一般写在head标签里面，title标签下面
-语法：选择器 {css属性}
+语法：`选择器 {css属性}`
 
 CSS引入方式有以下几种：
 
