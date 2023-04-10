@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        /* 选中第一个 */
-        li:first-child {
+        /* 偶数 */
+        /* li:nth-child(2n) {
             background-color: green;
-        }
+        } */
 
-        /* 选中最后一个 */
-        li:last-child {
+        /* 奇数 */
+        /* li:nth-child(2n+1) {
             background-color: green;
-        }
+        } */
 
-        /* 选中第三个 */
-        li:nth-child(3) {
+        /* 前三个 */
+        /* li:nth-child(-n+3) {
             background-color: green;
-        }
+        } */
 
-        /* 选中倒数第三个 */
-        li:nth-last-child(3) {
+        /* 第三个往后 */
+        /* li:nth-child(n+3) {
+            background-color: green;
+        } */
+
+        /* 选中第四第八 */
+        li:nth-child(4n) {
             background-color: green;
         }
     </style>
 </head>
+
 <body>
     <ul>
         <li>这是第1个li</li>
@@ -39,4 +46,5 @@
         <li>这是第8个li</li>
     </ul>
 </body>
+
 </html>
