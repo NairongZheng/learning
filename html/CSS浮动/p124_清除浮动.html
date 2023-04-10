@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .top {
+            margin: 0 auto;
+            width: 1000px;
+            /* 第一种：直接给父元素加高。有的时候不方便加高，浮动就会影响 */
+            /* height: 300px; */
+            background-color: pink;
+
+            /* 第五种 */
+            overflow: hidden;
+        }
+
+        .bottom {
+            height: 100px;
+            background-color: green;
+        }
+
+        .left {
+            float: left;
+
+            width: 200px;
+            height: 300px;
+            background-color: #ccc;
+        }
+
+        .right {
+            float: right;
+
+            width: 790px;
+            height: 300px;
+            background-color: skyblue;
+        }
+
+        /* 第二种：额外标签法 */
+        /* .clearfix {
+            clear:both
+        } */
+
+        /* 第三种：单伪元素清除法 */
+        /* .clearfix::after {
+            content: ''; */
+            /* 伪元素添加的标签是行内，要求块 */
+            /* display: block;
+            clear: both; */
+
+            /* 为了兼容性，还可以加以下两行 */
+            /* height: 0; 
+            visibility: hidden;
+        } */
+
+        /* 第四种：双伪元素清除法 */
+        /* .clearfix::before 作用：解决外边距塌陷问题 */
+        /* .clearfix::before, 
+        .clearfix::after {
+            content: '';
+            display: table;
+        } */
+
+        /* 真正清除浮动的标签 */
+        /* .clearfix::after {
+            clear: both;
+        } */
+
+
+    </style>
+</head>
+<body>
+    <!-- 第三种：单伪元素清除法（要加个clearfix类） -->
+    <div class="top clearfix">
+        <div class="left"></div>
+        <div class="right"></div>
+
+        <!-- 第二种：额外标签法 -->
+        <!-- <div class="clearfix"></div> -->
+    </div>
+    <div class="bottom"></div>
+</body>
+</html>

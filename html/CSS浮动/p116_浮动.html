@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 案例1 */
+        /* div {
+            width: 100px;
+            height: 100px; */
+
+            /* 浏览器解析行内块或行内标签的时候，如果标签换行书写会产生一个空格的距离 */
+            /* 但是都写在同一行，代码可读性很低，可以用浮动解决 */
+            /* display: inline-block; */
+        /* } */
+
+        /* .one {
+            background-color: pink; */
+            /* 浮动可以让块标签完美排在一行 */
+            /* float: left;
+        } */
+
+        /* .two {
+            background-color: skyblue;
+            float: left;
+        } */
+
+        /* 案例2 */
+        .one {
+            width: 100px;
+            height: 100px;
+            background-color: pink;
+
+            float: left;
+        }
+        .two {
+            width: 200px;
+            height: 200px;
+            background-color: skyblue;
+
+            float: left;
+
+            /* 因为有浮动，所以不能生效，盒子无法水平居中 */
+            /* margin: 0 auto; */
+        }
+        .three {
+            width: 300px;
+            height: 300px;
+            background-color: orange;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 案例1 -->
+    <!-- <div class="one">one</div>
+    <div class="two">two</div> -->
+
+    <!-- 案例2 -->
+    <div class="one">one</div>
+    <div class="two">two</div>
+    <div class="three">three</div>
+</body>
+
+</html>
