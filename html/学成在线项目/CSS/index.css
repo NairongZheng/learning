@@ -340,3 +340,14 @@ h1 {
     float: left;
     margin-left: 120px;
 }
+
+/* CSS定位中的hot */
+.box .content li {
+    position: relative;
+}
+
+.box .content li .hot {
+    position: absolute;
+    right: -4px;
+    top: 4px;
+}

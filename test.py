@@ -1,69 +1,25 @@
-# Definition for a binary tree node.
-from stack_queue.stack_queue7_lc239_star import Solution
 
+def isValid(s):
+    stack = []
+    for item in s:
+        if item == '[':
+            stack.append(']')
+        elif item == '(':
+            stack.append(')')
+        elif item == '{':
+            stack.append('}')
+        else:
+            if len(stack) == 0 or stack.pop() != item:
+                return False
+    if len(stack) != 0:
+        return False
+    return True
 
-class TreeNode(object):
-    def __init__(self, x):
-        self.val = x
-        self.left = None
-        self.right = None
-
-class Codec:
-
-    def serialize(self, root):
-        """Encodes a tree to a single string.
-        
-        :type root: TreeNode
-        :rtype: str
-        """
-        result = []
-        if not root:
-            return ''
-        stack = [root]
-        while stack:
-            node = stack.pop(0)
-            if node != '#':
-                result.append(str(node.val))
-                if node.left:
-                    stack.append(node.left)
-                else:
-                    stack.append('#')
-                if node.right:
-                    stack.append(node.right)
-                else:
-                    stack.append('#')
-            else:
-                result.append('#')
-        print(result)
-        return ''.join(result)
-
-    def deserialize(self, data):
-        """Decodes your encoded data to tree.
-        
-        :type data: str
-        :rtype: TreeNode
-        """
-        if len(data) == 0:
-            return None
-        def construct_tree(nums, index):
-            if index >= len(nums):
-                return
-            if nums[index] == '#':
-                return None
-            left = index * 2 + 1
-            right = index * 2 + 2
-            root = TreeNode(int(nums[index]))
-            root.left = construct_tree(nums, left)
-            root.right = construct_tree(nums, right)
-            return root
-        root = construct_tree(data, 0)
-        return root
-
-aaa = Codec()
-bbb = aaa.deserialize("123##4567####")
-pass
-
-# Your Codec object will be instantiated and called as such:
-# ser = Codec()
-# deser = Codec()
-# ans = deser.deserialize(ser.serialize(root))
+if __name__ == '__main__':
+    # 每个s都是一个测试案例
+    # s = '[]{}()'  # 正确的用例
+    s = '({[)})'    # 左右不符合的用例
+    s = '['         # 缺少右边括号的用例
+    s = '[])'       # 缺少左边括号的用例        这个就走到了！！！！
+    result = isValid(s)
+    print(result)
