@@ -7,3 +7,4 @@
 - ddp: pytorch分布式训练
 - pyqt：pyqt
 - html：html和css
+- rl：强化学习
