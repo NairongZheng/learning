@@ -1,5 +1,6 @@
 # rl强化学习
 [参考链接](https://www.bilibili.com/video/BV1Gq4y1v7Bs)
+
 [代码链接](https://github.com/rexrex9/reinforcement_torch_pfrl/tree/main)
 
 0. gridworld.py：渲染用的
@@ -8,6 +9,7 @@
 3. Q-learning
 4. DQN
 5. 经验回放
+6. 固定Q目标
 
 
 ## 公式
