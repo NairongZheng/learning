@@ -6,6 +6,8 @@
 1. gym了解
 2. SARSA
 3. Q-learning
+4. DQN
+5. 经验回放
 
 
 ## 公式
