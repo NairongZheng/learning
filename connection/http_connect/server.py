@@ -1,22 +1,14 @@
 import tornado.ioloop
 import tornado.web
 import tornado.httpserver
-
-
-class MainHandler(tornado.web.RequestHandler):
-    def post(self):
-        try:
-            data = self.request.body.decode("utf-8")
-            upper_case_data = data.upper()
-            self.write({"success": True, "data": upper_case_data})
-        except Exception as e:
-            self.write({"success": False, "error": str(e)})
+from instance_handler import SumHandler, UpperHandler
 
 
 def make_app():
     return tornado.web.Application(
         [
-            (r"/", MainHandler),
+            (r"/sumHandler", SumHandler),
+            (r"/upperHandler", UpperHandler, dict(test_para="Successful parameter passing")),
         ]
     )
 
@@ -24,5 +16,7 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
     server = tornado.httpserver.HTTPServer(app)
-    server.listen(8888)
+    http_port = 8888
+    server.listen(http_port)
+    print(f"debug damonzheng, listen on {http_port}")
     tornado.ioloop.IOLoop.current().start()
