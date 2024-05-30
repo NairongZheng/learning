@@ -13,6 +13,9 @@ class SumResponse(BaseModel):
     data: int
     msg: str
 
+class UpperRequest(BaseModel):
+    para_str: str
+
 class UpperResponse(BaseModel):
     errcode: int
     data: str
@@ -20,6 +23,7 @@ class UpperResponse(BaseModel):
 
 @app.post("/sumHandler", response_model=SumResponse)
 async def sum_handler(request: SumRequest):
+    print(f"debug damonzheng, SumHandler_request:{request}")
     try:
         res = request.para_a + request.para_b
         return SumResponse(errcode=200, data=res, msg="")
@@ -27,11 +31,10 @@ async def sum_handler(request: SumRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/upperHandler", response_model=UpperResponse)
-async def upper_handler(request: Request):
+async def upper_handler(request: UpperRequest):
+    print(f"debug damonzheng, UpperHandler_request:{request}")
     try:
-        request_body = await request.body()
-        request_str = request_body.decode("utf-8")
-        upper_case_data = request_str.upper()
+        upper_case_data = request.para_str.upper()
         return UpperResponse(errcode=200, data=upper_case_data, msg="Successful parameter passing")
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
