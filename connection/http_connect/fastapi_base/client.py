@@ -14,9 +14,9 @@ def test_sum():
         print("Failed to connect to server")
 
 def test_upper():
-    request = "lower string to upper string"
+    request = {"para_str": "lower string to upper string"}
     print(f"debug damonzheng, request:{request}")
-    response = requests.post(url="http://localhost:12300/upperHandler", data=request)
+    response = requests.post(url="http://localhost:12300/upperHandler", json=request)
     if response.status_code == 200:
         result = response.json()
         if result["errcode"] == 200:
