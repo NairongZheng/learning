@@ -15,12 +15,12 @@ class Client:
 
     def send_random_data(self, msg_len):
         random_data = ''.join(random.choices(string.ascii_lowercase, k=msg_len))
-        msg = Message()
-        msg.content = random_data
-        self.send_data(msg)
+        send_msg = Message()
+        send_msg.content = random_data
+        self.send_data(send_msg)
 
-    def send_data(self, msg):
-        serialized_msg = msg.SerializeToString()
+    def send_data(self, send_msg: Message):
+        serialized_msg = send_msg.SerializeToString()
         size_bytes = len(serialized_msg).to_bytes(4, 'big')
         with self.client_socket.makefile('wb') as file:
             file.write(size_bytes)
@@ -31,22 +31,27 @@ class Client:
             size_bytes = file.read(4)
             size = int.from_bytes(size_bytes, 'big')
             received_data = file.read(size)
-            return received_data
+            received_msg = Message()
+            received_msg.ParseFromString(received_data)
+            return received_msg
 
     def close(self):
         self.client_socket.close()
+    
+    def run(self):
+        self.connect()
+        ttt1 = time.time()
+        self.send_random_data(msg_len=10000000)
+        ttt2 = time.time()
+        print(f"debug damonzheng, send msg cost time:{(ttt2-ttt1)*1000}")
+        received_msg = self.receive_data()
+        ttt3 = time.time()
+        print(f"debug damonzheng, recv msg cost time:{(ttt3-ttt2)*1000}")
+        print("received from server(len):", len(received_msg.content))
+        # print("received from server:", received_msg.content)
+        self.close()
+        pass
 
 if __name__ == "__main__":
     client = Client('127.0.0.1', 8888)
-    client.connect()
-    ttt1 = time.time()
-    client.send_random_data(msg_len=10000000)
-    ttt2 = time.time()
-    print(f"debug damonzheng, send msg cost time:{(ttt2-ttt1)*1000}")
-    received_data = client.receive_data()
-    ttt3 = time.time()
-    print(f"debug damonzheng, recv msg cost time:{(ttt3-ttt2)*1000}")
-    response_msg = Message()
-    response_msg.ParseFromString(received_data)
-    print("Received from server(len):", len(response_msg.content))
-    client.close()
+    client.run()
