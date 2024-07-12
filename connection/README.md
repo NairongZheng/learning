@@ -4,4 +4,5 @@
 - tcp_file: 使用读写的方法进行数据传输(tcp, proto)
 - tcp_stream: 使用流式方法进行数据传输(tcp, proto)
 - http_connect: http通信(tornado, fastapi)
-- grpc_connect: grpc通信(proto, 多进程)
+- grpc_connect: grpc通信(proto, 多进程不阻塞)
+- grpc_connect2: grpc通信(proto, 多进程阻塞)
