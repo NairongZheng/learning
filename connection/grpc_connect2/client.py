@@ -53,26 +53,36 @@ class Client:
 
     def create_request(self, req_data, req_type):
         if req_type == "GetMinDisReq":
-            return grpc_test_pb2.GetMinDisReq(
-                point_lists=[
-                    grpc_test_pb2.VectorList(
-                        point_list=[
-                            grpc_test_pb2.Vector(x=point[0], y=point[1], z=point[2])
-                            for point in point_list
-                        ]
-                    )
-                    for point_list in req_data
-                ]
-            )
+            # # 写法一：
+            # req_msg = grpc_test_pb2.GetMinDisReq(
+            #     point_lists=[
+            #         grpc_test_pb2.VectorList(
+            #             point_list=[
+            #                 grpc_test_pb2.Vector(x=point[0], y=point[1], z=point[2])
+            #                 for point in point_list
+            #             ]
+            #         )
+            #         for point_list in req_data
+            #     ]
+            # )
+            # 写法二：
+            req_msg = grpc_test_pb2.GetMinDisReq()
+            for point_list in req_data:
+                point_list_msg = req_msg.point_lists.add()
+                for point in point_list:
+                    point_msg = point_list_msg.point_list.add()
+                    point_msg.x = point[0]
+                    point_msg.y = point[1]
+                    point_msg.z = point[2]
         elif req_type == "CountAndSumListReq":
-            return grpc_test_pb2.CountAndSumListReq(
+            req_msg = grpc_test_pb2.CountAndSumListReq(
                 num_list=[
                     grpc_test_pb2.NumList(num=num_list)
                     for num_list in req_data
                 ]
             )
         elif req_type == "UpperLettersReq":
-            return grpc_test_pb2.UpperLettersReq(
+            req_msg = grpc_test_pb2.UpperLettersReq(
                 letter_list=[
                     grpc_test_pb2.Letter(s=letter)
                     for letter in req_data
@@ -80,6 +90,8 @@ class Client:
             )
         else:
             raise ValueError(f"Unknown request type: {req_type}")
+        
+        return req_msg
 
     def divide_list(self, lst, k) -> Tuple[List, List]:
         n = len(lst) // k
