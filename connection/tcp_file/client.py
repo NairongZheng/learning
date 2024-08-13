@@ -25,6 +25,7 @@ class Client:
         with self.client_socket.makefile('wb') as file:
             file.write(size_bytes)
             file.write(serialized_msg)
+            file.flush()
 
     def receive_data(self):
         with self.client_socket.makefile('rb') as file:
