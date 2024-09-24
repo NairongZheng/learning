@@ -2,8 +2,9 @@
 
 1. s1_enum.py：枚举
 2. s2_dataclass.py：数据类(装饰器实现)
-3. s3_namespace.py：命名空间
-4. s4_pandas.py：pandas
+3. s3_pydantic.py：数据验证和设置管理库
+4. s4_namespace.py：命名空间
+5. s5_pandas.py：pandas
 
 
 ## pandas
