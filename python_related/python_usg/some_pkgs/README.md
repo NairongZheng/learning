@@ -8,6 +8,7 @@
 6. s6_logging：日志库logging的使用
 7. s7_loguru：日志库loguru的使用
 8. s8_asyncio：协程
+9. s9_bs：爬虫
 
 
 ## pandas
