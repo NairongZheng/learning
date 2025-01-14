@@ -10,6 +10,10 @@
    2. pyqt：pyqt
    3. connection: 各种通信相关案例, 包括socket, http, 还有grpc
    4. python_usg：python使用
-3. frontend_related：前端相关
+3. cpp_related：cpp编程相关
+   1. connection：各种通信相关案例
+4. go_related：go编程相关
+   1. connection：各种通信相关案例
+5. frontend_related：前端相关
    1. html：html和css
-4. leetcode：刷题
+6. leetcode：刷题

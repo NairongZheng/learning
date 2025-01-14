@@ -9,9 +9,10 @@ def start_udp_server(server_addr):
 
     while True:
         message, client_address = server_socket.recvfrom(1024)
-        print("Received message from,", client_address, ":", message.decode())
+        print("Received message from client,", client_address, ":", message.decode())
         # response_message = f"Echo: {message.decode()}"
-        response_message = message.decode()
+        # response_message = message.decode()
+        response_message = f"Hello, UDP client!"
         server_socket.sendto(response_message.encode(), client_address)
 
 
