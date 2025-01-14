@@ -3,3 +3,4 @@ tmp.py
 *.log
 *.exe
 .vs
+.vscode

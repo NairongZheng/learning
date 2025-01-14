@@ -1,7 +1,9 @@
+// 编译命令：protoc --go_out=. --go-grpc_out=. -I . grpc_test.proto
+
 syntax = "proto3";
 package grpc_test;
 
-option go_package = "../grpc_connect/proto;proto";
+option go_package = "./;proto";     // 在当前文件夹下，生成的文件属于package proto
 
 // 定义了一个名为 GetMimDisService 的服务
 // 其中包含一个名为 GetMinDis 的 RPC 方法
