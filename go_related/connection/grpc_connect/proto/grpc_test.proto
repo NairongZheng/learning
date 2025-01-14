@@ -1,0 +1,29 @@
+syntax = "proto3";
+package grpc_test;
+
+option go_package = "../grpc_connect/proto;proto";
+
+// 定义了一个名为 GetMimDisService 的服务
+// 其中包含一个名为 GetMinDis 的 RPC 方法
+// 该方法接受一个 GetMinDisReq 消息作为参数, 并返回一个 GetMinDisRsp 消息作为响应
+
+message Vector {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+// 输入消息类型
+message GetMinDisReq {
+    repeated Vector point_list = 1;
+}
+
+// 返回消息类型
+message GetMinDisRsp {
+    float min_dis = 1;
+}
+
+// 定义服务
+service GetMimDisService {
+    rpc GetMinDis (GetMinDisReq) returns (GetMinDisRsp) {}
+}
