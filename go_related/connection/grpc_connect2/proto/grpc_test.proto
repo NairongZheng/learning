@@ -1,0 +1,61 @@
+// 编译命令：protoc --go_out=. --go-grpc_out=. -I . grpc_test.proto
+
+syntax = "proto3";
+package grpc_test;
+
+option go_package = "./;proto";
+
+// 1. 获取最小距离
+message Vector {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+message VectorList {
+    repeated Vector point_list = 1;
+}
+message GetMinDisReq {
+    repeated VectorList point_lists = 1;
+}
+message GetMinDisRsp {
+    repeated float min_dis = 1;
+}
+
+// 2. 统计数出现的频率，并相加
+message NumList{
+    repeated float num = 1;
+}
+message CountAndSumListReq {
+    repeated NumList num_list = 1;
+}
+message CountAndSumResInstruct {
+    map<string, int32> count_dict = 1;
+    float sum_res = 2;
+}
+message CountAndSumListRsp{
+    repeated CountAndSumResInstruct count_and_sum_res = 1;
+}
+
+// 3. 字符转大写
+message Letter {
+    string s = 1;
+}
+message UpperLettersReq {
+    repeated Letter letter_list = 1;
+}
+message UpperLettersRsp {
+    repeated Letter letter_res_list = 1;
+}
+
+// //////////////////////////////////////////
+// 定义服务数据类型
+message MessageData {
+    int32 id = 1; // request package id.
+    string name = 2; // message name.
+    bytes data = 3; // data payload
+}
+
+service ProtoTest {
+  // 正常请求
+  rpc doRequest(MessageData) returns (MessageData) {}
+}

@@ -19,6 +19,10 @@ type server struct {
 // 实现 GetMinDis 方法
 func (s *server) GetMinDis(ctx context.Context, req *pb.GetMinDisReq) (*pb.GetMinDisRsp, error) {
 	pointList := req.PointList
+
+	// 打印收到的点的个数
+	log.Printf("Received %d points.\n", len(pointList))
+
 	var minDis float32 = math.MaxFloat32
 
 	for i := 0; i < len(pointList); i++ {
@@ -35,6 +39,10 @@ func (s *server) GetMinDis(ctx context.Context, req *pb.GetMinDisReq) (*pb.GetMi
 			}
 		}
 	}
+	if minDis == math.MaxFloat32 {
+		minDis = -1
+	}
+	log.Printf("result %f.\n", minDis)
 	return &pb.GetMinDisRsp{MinDis: minDis}, nil
 }
 
