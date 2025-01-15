@@ -11,16 +11,17 @@ import (
 	pb "grpc_connect2/proto"
 
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/proto" // 导入 proto 包
+	"google.golang.org/protobuf/proto"
 )
 
-// ProtoTestServer 实现 ProtoTest gRPC 服务
-type ProtoTestServer struct {
+type server struct {
+	// 创建ProtoTestServer结构体，继承了pb.UnimplementedProtoTestServer结构体的所有方法
+	// proto文件中定义的ProtoTest只有一个doRequest方法，所以下面实现的除了doRequest方法，其他的方法都是内部给doRequest调用的
 	pb.UnimplementedProtoTestServer
 }
 
-// GetMinDis 处理 GetMinDisReq 请求
-func (s *ProtoTestServer) GetMinDis(req *pb.GetMinDisReq) (*pb.GetMinDisRsp, error) {
+// 内部实现GetMinDis让doRequest调用
+func (s *server) GetMinDis(req *pb.GetMinDisReq) (*pb.GetMinDisRsp, error) {
 	log.Printf("Received GetMinDisReq: %v", req) // 打印请求内容
 	log.Printf("-------------------------------------------------")
 	var minDisList []float32
@@ -48,8 +49,8 @@ func (s *ProtoTestServer) GetMinDis(req *pb.GetMinDisReq) (*pb.GetMinDisRsp, err
 	return &pb.GetMinDisRsp{MinDis: minDisList}, nil
 }
 
-// CountAndSumList 处理 CountAndSumListReq 请求
-func (s *ProtoTestServer) CountAndSumList(req *pb.CountAndSumListReq) (*pb.CountAndSumListRsp, error) {
+// 内部实现CountAndSumList让doRequest调用
+func (s *server) CountAndSumList(req *pb.CountAndSumListReq) (*pb.CountAndSumListRsp, error) {
 	log.Printf("Received CountAndSumListReq: %v", req) // 打印请求内容
 	log.Printf("-------------------------------------------------")
 	var resList []*pb.CountAndSumResInstruct
@@ -69,8 +70,8 @@ func (s *ProtoTestServer) CountAndSumList(req *pb.CountAndSumListReq) (*pb.Count
 	return &pb.CountAndSumListRsp{CountAndSumRes: resList}, nil
 }
 
-// UpperLetters 处理 UpperLettersReq 请求
-func (s *ProtoTestServer) UpperLetters(req *pb.UpperLettersReq) (*pb.UpperLettersRsp, error) {
+// 内部实现UpperLetters让doRequest调用
+func (s *server) UpperLetters(req *pb.UpperLettersReq) (*pb.UpperLettersRsp, error) {
 	log.Printf("Received UpperLettersReq: %v", req) // 打印请求内容
 	log.Printf("-------------------------------------------------")
 	var resList []*pb.Letter
@@ -80,47 +81,47 @@ func (s *ProtoTestServer) UpperLetters(req *pb.UpperLettersReq) (*pb.UpperLetter
 	return &pb.UpperLettersRsp{LetterResList: resList}, nil
 }
 
-// DoRequest 处理通用请求
-func (s *ProtoTestServer) DoRequest(ctx context.Context, req *pb.MessageData) (*pb.MessageData, error) {
+// 实现server的DoRequest方法
+func (s *server) DoRequest(ctx context.Context, req *pb.MessageData) (*pb.MessageData, error) {
 	switch req.Name {
 	case "GetMinDisReq":
 		data := &pb.GetMinDisReq{}
-		if err := proto.Unmarshal(req.Data, data); err != nil { // 使用 proto.Unmarshal
+		if err := proto.Unmarshal(req.Data, data); err != nil {
 			return nil, err
 		}
 		res, err := s.GetMinDis(data)
 		if err != nil {
 			return nil, err
 		}
-		dataBytes, err := proto.Marshal(res) // 使用 proto.Marshal
+		dataBytes, err := proto.Marshal(res)
 		if err != nil {
 			return nil, err
 		}
 		return &pb.MessageData{Id: req.Id, Name: req.Name, Data: dataBytes}, nil
 	case "CountAndSumListReq":
 		data := &pb.CountAndSumListReq{}
-		if err := proto.Unmarshal(req.Data, data); err != nil { // 使用 proto.Unmarshal
+		if err := proto.Unmarshal(req.Data, data); err != nil {
 			return nil, err
 		}
 		res, err := s.CountAndSumList(data)
 		if err != nil {
 			return nil, err
 		}
-		dataBytes, err := proto.Marshal(res) // 使用 proto.Marshal
+		dataBytes, err := proto.Marshal(res)
 		if err != nil {
 			return nil, err
 		}
 		return &pb.MessageData{Id: req.Id, Name: req.Name, Data: dataBytes}, nil
 	case "UpperLettersReq":
 		data := &pb.UpperLettersReq{}
-		if err := proto.Unmarshal(req.Data, data); err != nil { // 使用 proto.Unmarshal
+		if err := proto.Unmarshal(req.Data, data); err != nil {
 			return nil, err
 		}
 		res, err := s.UpperLetters(data)
 		if err != nil {
 			return nil, err
 		}
-		dataBytes, err := proto.Marshal(res) // 使用 proto.Marshal
+		dataBytes, err := proto.Marshal(res)
 		if err != nil {
 			return nil, err
 		}
@@ -137,11 +138,12 @@ func StartServer() {
 		log.Fatalf("Failed to listen on port 50051: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
-	pb.RegisterProtoTestServer(grpcServer, &ProtoTestServer{})
+	grpcServer := grpc.NewServer()	// 初始化grpc服务
+	pb.RegisterProtoTestServer(grpcServer, &server{})	// 将实现的server注册到gRPC服务器。
 
 	log.Println("Server is running on 127.0.0.1:50051...")
-	if err := grpcServer.Serve(listener); err != nil {
+	err = grpcServer.Serve(listener)	// 将grpc服务绑定到上面创建的tcp端口
+	if err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 }
