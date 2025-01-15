@@ -58,4 +58,9 @@ message MessageData {
 service ProtoTest {
   // 正常请求
   rpc doRequest(MessageData) returns (MessageData) {}
+
+  // 为了统一和数据格式，所以只有一个方法，也可以写成多种方法的形式，如下
+  // rpc GetMinDis(GetMinDisReq) returns (GetMinDisRsp) {}
+  // rpc CountAndSumList(CountAndSumListReq) returns (CountAndSumListRsp) {}
+  // rpc UpperLetters(UpperLettersReq) returns (UpperLettersRsp) {}
 }

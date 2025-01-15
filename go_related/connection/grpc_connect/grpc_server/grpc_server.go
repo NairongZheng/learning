@@ -6,17 +6,18 @@ import (
 	"math"
 	"net"
 
-	pb "grpc_connect/proto" // 替换为实际 proto 文件的导入路径
+	pb "grpc_connect/proto"
 
 	"google.golang.org/grpc"
 )
 
 // 定义服务结构体
 type server struct {
+	// 创建server结构体，继承了pb.UnimplementedGetMimDisServiceServer结构体的所有方法
 	pb.UnimplementedGetMimDisServiceServer
 }
 
-// 实现 GetMinDis 方法
+// 实现 server 的 GetMinDis 方法
 func (s *server) GetMinDis(ctx context.Context, req *pb.GetMinDisReq) (*pb.GetMinDisRsp, error) {
 	pointList := req.PointList
 
@@ -47,16 +48,17 @@ func (s *server) GetMinDis(ctx context.Context, req *pb.GetMinDisReq) (*pb.GetMi
 }
 
 func StartServer() {
-	listener, err := net.Listen("tcp", ":50051")	// 创建一个 TCP 监听器，监听端口 50051。
+	listener, err := net.Listen("tcp", ":50051")	// 创建一个TCP监听器，监听端口50051。
 	if err != nil {
 		log.Fatalf("Failed to listen on port 50051: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()	// 创建一个 gRPC 服务器实例。
-	pb.RegisterGetMimDisServiceServer(grpcServer, &server{})	// 注册 GetMinDis 服务，将 server{} 作为服务实例。
+	grpcServer := grpc.NewServer()	// 初始化grpc服务
+	pb.RegisterGetMimDisServiceServer(grpcServer, &server{})	// 将自定义的业务逻辑注册到grpc服务器中
 
 	log.Println("Server is listening on port 50051...")
-	if err := grpcServer.Serve(listener); err != nil {
+	err = grpcServer.Serve(listener)	// 将grpc服务绑定在上面创建的tcp端口
+	if err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 }
