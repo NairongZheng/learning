@@ -1,17 +1,24 @@
-//go:build ignore
-// 只有一个服务器一个进程请求
+// batch并发实现（不是请求类型并发）
 package grpc_client
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"sort"
+	"sync"
 
 	grpc_test_pb "grpc_connect2/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
+
+// 创建一个Result结构体来保存结果，主要是存idx用来给并发后乱序做排序
+type Result struct {
+	Index int
+	Data interface{}
+}
 
 // 创建一个Test结构体（可理解为python的类）
 type Test struct {
@@ -157,40 +164,75 @@ func (c *Client) decodeResponse(rspByteData []byte, reqType string) (interface{}
 }
 
 // Client结构体的方法（可以理解为python类中的self函数）
-func (c *Client) processRequests(data interface{}, reqType string) ([]interface{}, error){
-	batches := c.divideList(data, 2)
-	// fmt.Println("batches: ", batches)
-	var result []interface{}
+func (c *Client) processRequestsConcurrently(data interface{}, reqType string) ([]interface{}, error) {
+    batches := c.divideList(data, 2)
+    var wg sync.WaitGroup
+	// 创建缓冲通道，缓冲大小为 len(batches)，确保通道可以容纳所有批次的结果，避免通道在未及时读取时发生阻塞。
+    resultCh := make(chan Result, len(batches))
+    errorCh := make(chan error, len(batches))
 
-	conn, err := grpc.Dial(c.serverAddress, grpc.WithInsecure())
-	if err != nil {
-		log.Printf("failed to connect: %v", err)
-		return nil, err
-	}
-	defer conn.Close()
-	ctx := context.Background()
-	client := grpc_test_pb.NewProtoTestClient(conn)
-	for idx, batch := range batches {
-		// fmt.Println("batch: ", batch)
-		// fmt.Printf("Type of batch: %T\n", batch)
-		reqDataBytes, err := c.createRequest(batch, reqType)
-		if err != nil {
-			return nil, err
-		}
-		msg := &grpc_test_pb.MessageData{}
-		msg.Id = int32(idx)
-		msg.Name = reqType
-		msg.Data = reqDataBytes
+    conn, err := grpc.Dial(c.serverAddress, grpc.WithInsecure())
+    if err != nil {
+        log.Printf("failed to connect: %v", err)
+        return nil, err
+    }
+    defer conn.Close()
+    ctx := context.Background()
+    client := grpc_test_pb.NewProtoTestClient(conn)
 
-		rspByteData, err := client.DoRequest(ctx, msg)
-		if err != nil {
-			return nil, err
-		}
-		rspPost, _ := c.decodeResponse(rspByteData.GetData(), reqType)	// 只解析了一层，懒得解析了
-		result = append(result, rspPost)
+    for idx, batch := range batches {
+        wg.Add(1)	// 通知 WaitGroup 增加一个 goroutine 的计数，表示将启动一个新的并发任务。
+		// go func(idx int, batch []interface{}) { ... }(idx, batch) // 启动一个 goroutine 来处理当前批次的数据。
+        go func(idx int, batch []interface{}) {
+            defer wg.Done()
+            reqDataBytes, err := c.createRequest(batch, reqType)
+            if err != nil {
+                errorCh <- err
+                return
+            }
+            msg := &grpc_test_pb.MessageData{
+                Id:   int32(idx),
+                Name: reqType,
+                Data: reqDataBytes,
+            }
+
+            rspByteData, err := client.DoRequest(ctx, msg)
+            if err != nil {
+                errorCh <- err
+                return
+            }
+            rspPost, _ := c.decodeResponse(rspByteData.GetData(), reqType)
+            resultCh <- Result{Index: idx, Data: rspPost}
+        }(idx, batch)
+    }
+
+    // 等待所有 goroutine 完成
+    wg.Wait()
+    close(resultCh)
+    close(errorCh)
+
+    // 收集结果或错误
+	if len(errorCh) > 0 {
+        return nil, <-errorCh
+    }
+	var results []Result
+
+    for res := range resultCh {
+        results = append(results, res)
+    }
+
+	// 排序
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Index < results[j].Index
+	})
+    // 返回排序后的结果
+	var finalResult []interface{}
+	for _, res := range results {
+		finalResult = append(finalResult, res.Data)
 	}
-	return result, nil
+    return finalResult, nil
 }
+
 
 // Test结构体的方法（可以理解为python类中的self函数）
 func (t *Test) testGetMinDisReq() {
@@ -200,7 +242,7 @@ func (t *Test) testGetMinDisReq() {
 		{{3, 0.1, 2}, {9, 6, 5.6}, {9.2, 32, 12}},
 		{{1.2, 3, 0.6}},
 	}
-	results1, err1 := t.client.processRequests(pointLists, "GetMinDisReq")
+	results1, err1 := t.client.processRequestsConcurrently(pointLists, "GetMinDisReq")
 	if err1 != nil {
 		log.Printf("GetMinDisReq error: %v", err1)
 	} else {
@@ -216,7 +258,7 @@ func (t *Test) testCountAndSumListReq() {
 		{1, 2, 3, 1, 2, 4},
 		{0, 1, 2, 3, 3, 2, 0},
 	}
-	results2, err2 := t.client.processRequests(numbers, "CountAndSumListReq")
+	results2, err2 := t.client.processRequestsConcurrently(numbers, "CountAndSumListReq")
 	if err2 != nil {
 		log.Printf("CountAndSumListReq error: %v", err2)
 	} else {
@@ -232,7 +274,7 @@ func (t *Test) testUpperLettersReq() {
 		"fxxk grpc",
 		"legendary grpc",
 	}
-	results3, err3 := t.client.processRequests(stringList, "UpperLettersReq")
+	results3, err3 := t.client.processRequestsConcurrently(stringList, "UpperLettersReq")
 	if err3 != nil {
 		log.Printf("UpperLettersReq error: %v", err3)
 	} else {
@@ -248,7 +290,7 @@ func testUpperLettersReq(client *Client) {
 		"fxxk grpc",
 		"legendary grpc",
 	}
-	results3, err3 := client.processRequests(stringList, "UpperLettersReq")
+	results3, err3 := client.processRequestsConcurrently(stringList, "UpperLettersReq")
 	if err3 != nil {
 		log.Printf("UpperLettersReq error: %v", err3)
 	} else {
