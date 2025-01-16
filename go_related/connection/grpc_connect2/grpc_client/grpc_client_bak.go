@@ -1,5 +1,6 @@
-// 好像会有并发问题
+//go:build ignore
 
+// 好像会有并发问题
 package grpc_client
 
 import (
