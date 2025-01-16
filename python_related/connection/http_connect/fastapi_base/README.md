@@ -1,7 +1,7 @@
 
 
 # server
-server提供两个服务，分别用不用的写法实现，两种写法区别有(来自GPT)：
+server提供两个服务，分别用不同的写法实现，两种写法区别有(来自GPT)：
 ## 区别一
 是否用`pydantic`的`BaseModel`定义了请求和返回的格式
 1. 如果使用pydantic.BaseModel进行请求和响应的验证，可以确保数据格式正确。

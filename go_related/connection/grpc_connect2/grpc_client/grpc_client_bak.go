@@ -188,7 +188,7 @@ func StartClient() {
 	// 发起请求2：CountAndSumListReq
 	go func() {
 		numLists := []*pb.NumList{
-			{Num: []float32{1.1, 2.2, 3.3, 1.1, 2.2, 4,4}},
+			{Num: []float32{1.1, 2.2, 3.3, 1.1, 2.2, 4.4}},
 			{Num: []float32{1, 2, 3, 1, 2, 4}},
 			{Num: []float32{0, 1, 2, 3, 3, 2, 0}},
 		}

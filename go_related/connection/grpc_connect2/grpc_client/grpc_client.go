@@ -1,4 +1,5 @@
 //go:build ignore
+
 // 只有一个服务器一个进程请求
 package grpc_client
 
@@ -20,8 +21,8 @@ type Test struct {
 
 // 创建一个Client结构体（可理解为python的类）
 type Client struct {
-	serverAddress  string
-	handler      map[string]func([]byte) interface{}
+	serverAddress string
+	handler       map[string]func([]byte) interface{}
 }
 
 // Client结构体的方法（可以理解为python类中的self函数）
@@ -72,18 +73,18 @@ func (c *Client) createRequest(reqData interface{}, reqType string) ([]byte, err
 		for _, item := range batchItems {
 			pointList, ok := item.([][]float32)
 			if !ok {
-                return nil, fmt.Errorf("invalid item type in reqData, expected [][]float32")
-            }
+				return nil, fmt.Errorf("invalid item type in reqData, expected [][]float32")
+			}
 			pointListMsg := &grpc_test_pb.VectorList{}
-            for _, point := range pointList {
-                pointMsg := &grpc_test_pb.Vector{
-                    X: point[0],
-                    Y: point[1],
-                    Z: point[2],
-                }
-                pointListMsg.PointList = append(pointListMsg.PointList, pointMsg)
-            }
-            reqMsg.PointLists = append(reqMsg.PointLists, pointListMsg)
+			for _, point := range pointList {
+				pointMsg := &grpc_test_pb.Vector{
+					X: point[0],
+					Y: point[1],
+					Z: point[2],
+				}
+				pointListMsg.PointList = append(pointListMsg.PointList, pointMsg)
+			}
+			reqMsg.PointLists = append(reqMsg.PointLists, pointListMsg)
 		}
 		// fmt.Println("GetMinDisReq reqMsg: ", reqMsg)
 		return proto.Marshal(reqMsg)
@@ -92,11 +93,11 @@ func (c *Client) createRequest(reqData interface{}, reqType string) ([]byte, err
 		for _, item := range batchItems {
 			numList, ok := item.([]float32)
 			if !ok {
-                return nil, fmt.Errorf("invalid item type in batch, expected []float32")
-            }
+				return nil, fmt.Errorf("invalid item type in batch, expected []float32")
+			}
 			numListMsg := &grpc_test_pb.NumList{}
-            numListMsg.Num = append(numListMsg.Num, numList...)
-            reqMsg.NumList = append(reqMsg.NumList, numListMsg)
+			numListMsg.Num = append(numListMsg.Num, numList...)
+			reqMsg.NumList = append(reqMsg.NumList, numListMsg)
 		}
 		// fmt.Println("CountAndSumListReq reqMsg: ", reqMsg)
 		return proto.Marshal(reqMsg)
@@ -105,8 +106,8 @@ func (c *Client) createRequest(reqData interface{}, reqType string) ([]byte, err
 		for _, item := range batchItems {
 			letter, ok := item.(string)
 			if !ok {
-                return nil, fmt.Errorf("invalid item type in batch, expected string")
-            }
+				return nil, fmt.Errorf("invalid item type in batch, expected string")
+			}
 			reqMsg.LetterList = append(reqMsg.LetterList, &grpc_test_pb.Letter{S: letter})
 		}
 		// fmt.Println("UpperLettersReq reqMsg: ", reqMsg)
@@ -157,7 +158,7 @@ func (c *Client) decodeResponse(rspByteData []byte, reqType string) (interface{}
 }
 
 // Client结构体的方法（可以理解为python类中的self函数）
-func (c *Client) processRequests(data interface{}, reqType string) ([]interface{}, error){
+func (c *Client) processRequests(data interface{}, reqType string) ([]interface{}, error) {
 	batches := c.divideList(data, 2)
 	// fmt.Println("batches: ", batches)
 	var result []interface{}
@@ -186,7 +187,7 @@ func (c *Client) processRequests(data interface{}, reqType string) ([]interface{
 		if err != nil {
 			return nil, err
 		}
-		rspPost, _ := c.decodeResponse(rspByteData.GetData(), reqType)	// 只解析了一层，懒得解析了
+		rspPost, _ := c.decodeResponse(rspByteData.GetData(), reqType) // 只解析了一层，懒得解析了
 		result = append(result, rspPost)
 	}
 	return result, nil
@@ -270,10 +271,10 @@ func NewClient(servers string) *Client {
 		serverAddress: servers,
 	}
 	c.handler = map[string]func([]byte) interface{}{
-        "GetMinDisReq":       c.decodeGetMinDisRsp,
-        "CountAndSumListReq": c.decodeCountAndSumListRsp,
-        "UpperLettersReq":    c.decodeUpperLettersRsp,
-    }
+		"GetMinDisReq":       c.decodeGetMinDisRsp,
+		"CountAndSumListReq": c.decodeCountAndSumListRsp,
+		"UpperLettersReq":    c.decodeUpperLettersRsp,
+	}
 	// 输出调试信息
 	log.Println("Client is initialized.")
 	return c
@@ -285,6 +286,6 @@ func StartClient() {
 	test.testGetMinDisReq()
 	test.testCountAndSumListReq()
 	test.testUpperLettersReq()
-	
-	testUpperLettersReq(client)	// 也可以不用这么麻烦，直接用普通函数，就不需要Test类了
+
+	testUpperLettersReq(client) // 也可以不用这么麻烦，直接用普通函数，就不需要Test类了
 }

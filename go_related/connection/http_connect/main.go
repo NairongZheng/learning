@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"grpc_connect2/grpc_client"
-	"grpc_connect2/grpc_server"
+	"http_connect/http_client"
+	"http_connect/http_server"
 	"os"
 )
 
@@ -16,9 +16,9 @@ func main() {
 	mode := os.Args[1]
 	switch mode {
 	case "server":
-		grpc_server.StartServer()
+		http_server.StartServer()
 	case "client":
-		grpc_client.StartClient()
+		http_client.StartClient()
 	default:
 		fmt.Println("Invalid mode. Use 'client' or 'server'.")
 	}

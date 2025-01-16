@@ -16,7 +16,7 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
     server = tornado.httpserver.HTTPServer(app)
-    http_port = 8888
+    http_port = 12300
     server.listen(http_port)
     print(f"debug damonzheng, listen on {http_port}")
     tornado.ioloop.IOLoop.current().start()
