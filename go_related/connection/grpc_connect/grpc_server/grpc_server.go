@@ -48,16 +48,16 @@ func (s *server) GetMinDis(ctx context.Context, req *pb.GetMinDisReq) (*pb.GetMi
 }
 
 func StartServer() {
-	listener, err := net.Listen("tcp", ":50051")	// 创建一个TCP监听器，监听端口50051。
+	listener, err := net.Listen("tcp", ":50051") // 创建一个TCP监听器，监听端口50051。
 	if err != nil {
 		log.Fatalf("Failed to listen on port 50051: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()	// 初始化grpc服务
-	pb.RegisterGetMimDisServiceServer(grpcServer, &server{})	// 将自定义的业务逻辑注册到grpc服务器中
+	grpcServer := grpc.NewServer()                           // 初始化grpc服务
+	pb.RegisterGetMimDisServiceServer(grpcServer, &server{}) // 将自定义的业务逻辑注册到grpc服务器中
 
 	log.Println("Server is listening on port 50051...")
-	err = grpcServer.Serve(listener)	// 将grpc服务绑定在上面创建的tcp端口
+	err = grpcServer.Serve(listener) // 将grpc服务绑定在上面创建的tcp端口
 	if err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

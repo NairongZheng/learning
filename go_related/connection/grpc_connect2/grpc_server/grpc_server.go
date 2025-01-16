@@ -138,11 +138,11 @@ func StartServer() {
 		log.Fatalf("Failed to listen on port 50051: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()	// 初始化grpc服务
-	pb.RegisterProtoTestServer(grpcServer, &server{})	// 将实现的server注册到gRPC服务器。
+	grpcServer := grpc.NewServer()                    // 初始化grpc服务
+	pb.RegisterProtoTestServer(grpcServer, &server{}) // 将实现的server注册到gRPC服务器。
 
 	log.Println("Server is running on 127.0.0.1:50051...")
-	err = grpcServer.Serve(listener)	// 将grpc服务绑定到上面创建的tcp端口
+	err = grpcServer.Serve(listener) // 将grpc服务绑定到上面创建的tcp端口
 	if err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

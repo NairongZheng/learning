@@ -17,7 +17,7 @@ func StartClient() {
 	}
 	defer conn.Close()
 
-	client := pb.NewGetMimDisServiceClient(conn)	// 创建一个GetMimDisService服务的客户端实例，用于调用远程服务器的RPC方法。
+	client := pb.NewGetMimDisServiceClient(conn) // 创建一个GetMimDisService服务的客户端实例，用于调用远程服务器的RPC方法。
 
 	pointLists := [][]*pb.Vector{
 		{{X: 1, Y: 2, Z: 3}, {X: 4, Y: 6, Z: 9}, {X: 3.6, Y: 9.2, Z: 2.3}},
@@ -30,7 +30,7 @@ func StartClient() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
 
-		resp, err := client.GetMinDis(ctx, req)		// 调用服务器的GetMinDis方法
+		resp, err := client.GetMinDis(ctx, req) // 调用服务器的GetMinDis方法
 		if err != nil {
 			log.Printf("Error calling GetMinDis: %v", err)
 			continue

@@ -39,6 +39,8 @@ class UpperHandler(tornado.web.RequestHandler):
         """ 处理请求并返回结果 """
         try:
             request = self.request.body.decode("utf-8")
+            request = json.loads(request)
+            request = request["para_str"]
             print(f"debug damonzheng, UpperHandler_request:{request}")
             upper_case_data = request.upper()
             response = {

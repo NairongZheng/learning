@@ -6,7 +6,7 @@ import requests
 def test_sum():
     request = {"para_a": 10, "para_b": 36}
     print(f"debug damonzheng, request:{request}")
-    response = requests.post(url="http://localhost:8888/sumHandler", json=request)
+    response = requests.post(url="http://localhost:12300/sumHandler", json=request)
     if response.status_code == 200:
         result = response.json()
         if result["errcode"] == 200:
@@ -18,9 +18,10 @@ def test_sum():
 
 
 def test_upper():
-    request = "lower string to upper string"
+    request = {"para_str": "lower string to upper string"}
     print(f"debug damonzheng, request:{request}")
-    response = requests.post(url="http://localhost:8888/upperHandler", data=request)
+    # 也有用data字段传的，这边改成了dict形式，所以用json
+    response = requests.post(url="http://localhost:12300/upperHandler", json=request)
     if response.status_code == 200:
         result = response.json()
         if result["errcode"] == 200:
