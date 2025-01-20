@@ -20,6 +20,7 @@ class ProtoTestServicer(grpc_test_pb2_grpc.ProtoTestServicer):
         }
 
     def GetMinDis(self, data):
+        print(f"debug damonzheng, request type: GetMinDis, point_lists_len: {len(data.point_lists)}")
         min_dis_list = []
         for point_lists in data.point_lists:
             min_dis = float("inf")
@@ -36,6 +37,7 @@ class ProtoTestServicer(grpc_test_pb2_grpc.ProtoTestServicer):
         return rsp_msg.SerializeToString()
 
     def CountAndSumList(self, data):
+        print(f"debug damonzheng, request type: CountAndSumList, num_list_len: {len(data.num_list)}")
         res_list = []
         for num_list in data.num_list:
             count = Counter(num_list.num)
@@ -46,6 +48,7 @@ class ProtoTestServicer(grpc_test_pb2_grpc.ProtoTestServicer):
         return rsp_msg.SerializeToString()
 
     def UpperLetters(self, data):
+        print(f"debug damonzheng, request type: UpperLetters, letter_list_len: {len(data.letter_list)}")
         res_list = [grpc_test_pb2.Letter(s=letter.s.upper()) for letter in data.letter_list]
         rsp_msg = grpc_test_pb2.UpperLettersRsp(letter_res_list=res_list)
         return rsp_msg.SerializeToString()

@@ -60,5 +60,7 @@ int main() {
         std::cout << "Minimum distance: " << min_dis << std::endl;
     }
 
+    std::cout << "Press Enter to exit...";
+    std::cin.get(); // 等待用户按回车键
     return 0;
 }
