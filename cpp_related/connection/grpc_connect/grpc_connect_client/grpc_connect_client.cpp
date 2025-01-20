@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 #include <grpcpp/grpcpp.h>
 #include "proto/grpc_test.grpc.pb.h"
 
@@ -14,16 +15,17 @@ using grpc_test::Vector;
 
 class GetMinDisClient {
 public:
-    // 构造函数中初始化 stub_，用于与服务端通信。
-    GetMinDisClient(std::shared_ptr<Channel> channel) : stub_(GetMimDisService::NewStub(channel)) {}
+    explicit GetMinDisClient(std::shared_ptr<Channel> channel) 
+        : stub_(GetMimDisService::NewStub(channel)) {}
 
-    float GetMinDis(const std::vector<Vector>& point_list) {
+    float GetMinDis(const std::vector<std::vector<float>>& points) {
         GetMinDisReq request;
-        for (const auto& point : point_list) {
+
+        for (const auto& point : points) {
             auto* vector = request.add_point_list();
-            vector->set_x(point.x());
-            vector->set_y(point.y());
-            vector->set_z(point.z());
+            vector->set_x(point[0]);
+            vector->set_y(point[1]);
+            vector->set_z(point[2]);
         }
 
         GetMinDisRsp reply;
@@ -44,16 +46,19 @@ private:
 };
 
 int main() {
-    GetMinDisClient client(grpc::CreateChannel("127.0.0.1:50051", grpc::InsecureChannelCredentials()));
+    auto channel = grpc::CreateChannel("127.0.0.1:50051", grpc::InsecureChannelCredentials());
+    GetMinDisClient client(channel);
 
-    std::vector<Vector> points = {
-        [] { Vector v; v.set_x(1); v.set_y(2); v.set_z(3); return v; }(),
-        [] { Vector v; v.set_x(4); v.set_y(6); v.set_z(9); return v; }(),
-        [] { Vector v; v.set_x(3.6); v.set_y(9.2); v.set_z(2.3); return v; }()
+    std::vector<std::vector<std::vector<float>>> point_lists = {
+        {{1.0f, 2.0f, 3.0f}, {4.0f, 6.0f, 9.0f}, {3.6f, 9.2f, 2.3f}},
+        {{3.0f, 0.1f, 2.0f}, {9.0f, 6.0f, 5.6f}, {1.2f, 3.0f, 0.6f}},
+        {{9.0f, 2.0f, 1.0f}}
     };
 
-    float min_dis = client.GetMinDis(points);   // 这里的points可以不用std::vector<Vector>，直接用std::vector<vector>，然后再在函数里面赋值就行
-    std::cout << "Minimum distance: " << min_dis << std::endl;
+    for (auto &points : point_lists) {
+        float min_dis = client.GetMinDis(points);
+        std::cout << "Minimum distance: " << min_dis << std::endl;
+    }
 
     return 0;
 }

@@ -17,8 +17,14 @@ using grpc_test::Vector;
 class GetMimDisServiceImpl final : public GetMimDisService::Service {
 public:
     Status GetMinDis(ServerContext* context, const GetMinDisReq* request, GetMinDisRsp* reply) override {
-        const auto& point_list = request->point_list();
+        // 打印客户端地址
+        std::cout << "Client connected from: " << context->peer() << std::endl;
+
+        const auto& point_list = request->point_list(); // 获取请求内容
         float min_dis = std::numeric_limits<float>::infinity();
+
+        // 打印请求中的 point_list 的长度
+        std::cout << "Received request with point_list, len is: " << point_list.size() << std::endl;
 
         for (int i = 0; i < point_list.size(); ++i) {
             for (int j = 0; j < point_list.size(); ++j) {
