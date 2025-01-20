@@ -7,6 +7,7 @@
 #include "grpc_test.pb.h"
 
 #include <functional>
+#include <grpc/impl/codegen/port_platform.h>
 #include <grpcpp/impl/codegen/async_generic_service.h>
 #include <grpcpp/impl/codegen/async_stream.h>
 #include <grpcpp/impl/codegen/async_unary_call.h>
@@ -43,22 +44,30 @@ class GetMimDisService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::grpc_test::GetMinDisRsp>> PrepareAsyncGetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::grpc_test::GetMinDisRsp>>(PrepareAsyncGetMinDisRaw(context, request, cq));
     }
-    class async_interface {
+    class experimental_async_interface {
      public:
-      virtual ~async_interface() {}
+      virtual ~experimental_async_interface() {}
       virtual void GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       virtual void GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
     };
-    typedef class async_interface experimental_async_interface;
-    virtual class async_interface* async() { return nullptr; }
-    class async_interface* experimental_async() { return async(); }
-   private:
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    typedef class experimental_async_interface async_interface;
+    #endif
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    async_interface* async() { return experimental_async(); }
+    #endif
+    virtual class experimental_async_interface* experimental_async() { return nullptr; }
+  private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::grpc_test::GetMinDisRsp>* AsyncGetMinDisRaw(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::grpc_test::GetMinDisRsp>* PrepareAsyncGetMinDisRaw(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
-    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
     ::grpc::Status GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc_test::GetMinDisRsp* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::grpc_test::GetMinDisRsp>> AsyncGetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::grpc_test::GetMinDisRsp>>(AsyncGetMinDisRaw(context, request, cq));
@@ -66,22 +75,26 @@ class GetMimDisService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::grpc_test::GetMinDisRsp>> PrepareAsyncGetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::grpc_test::GetMinDisRsp>>(PrepareAsyncGetMinDisRaw(context, request, cq));
     }
-    class async final :
-      public StubInterface::async_interface {
+    class experimental_async final :
+      public StubInterface::experimental_async_interface {
      public:
       void GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       void GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
      private:
       friend class Stub;
-      explicit async(Stub* stub): stub_(stub) { }
+      explicit experimental_async(Stub* stub): stub_(stub) { }
       Stub* stub() { return stub_; }
       Stub* stub_;
     };
-    class async* async() override { return &async_stub_; }
+    class experimental_async_interface* experimental_async() override { return &async_stub_; }
 
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
-    class async async_stub_{this};
+    class experimental_async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::grpc_test::GetMinDisRsp>* AsyncGetMinDisRaw(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::grpc_test::GetMinDisRsp>* PrepareAsyncGetMinDisRaw(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_GetMinDis_;
@@ -116,22 +129,36 @@ class GetMimDisService final {
   };
   typedef WithAsyncMethod_GetMinDis<Service > AsyncService;
   template <class BaseClass>
-  class WithCallbackMethod_GetMinDis : public BaseClass {
+  class ExperimentalWithCallbackMethod_GetMinDis : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_GetMinDis() {
-      ::grpc::Service::MarkMethodCallback(0,
+    ExperimentalWithCallbackMethod_GetMinDis() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(0,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc_test::GetMinDisReq, ::grpc_test::GetMinDisRsp>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response) { return this->GetMinDis(context, request, response); }));}
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response) { return this->GetMinDis(context, request, response); }));}
     void SetMessageAllocatorFor_GetMinDis(
-        ::grpc::MessageAllocator< ::grpc_test::GetMinDisReq, ::grpc_test::GetMinDisRsp>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::grpc_test::GetMinDisReq, ::grpc_test::GetMinDisRsp>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
+    #endif
       static_cast<::grpc::internal::CallbackUnaryHandler< ::grpc_test::GetMinDisReq, ::grpc_test::GetMinDisRsp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_GetMinDis() override {
+    ~ExperimentalWithCallbackMethod_GetMinDis() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
@@ -139,11 +166,20 @@ class GetMimDisService final {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* GetMinDis(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc_test::GetMinDisReq* /*request*/, ::grpc_test::GetMinDisRsp* /*response*/)  { return nullptr; }
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc_test::GetMinDisReq* /*request*/, ::grpc_test::GetMinDisRsp* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* GetMinDis(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc_test::GetMinDisReq* /*request*/, ::grpc_test::GetMinDisRsp* /*response*/)
+    #endif
+      { return nullptr; }
   };
-  typedef WithCallbackMethod_GetMinDis<Service > CallbackService;
-  typedef CallbackService ExperimentalCallbackService;
+  #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+  typedef ExperimentalWithCallbackMethod_GetMinDis<Service > CallbackService;
+  #endif
+
+  typedef ExperimentalWithCallbackMethod_GetMinDis<Service > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_GetMinDis : public BaseClass {
    private:
@@ -182,17 +218,27 @@ class GetMimDisService final {
     }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_GetMinDis : public BaseClass {
+  class ExperimentalWithRawCallbackMethod_GetMinDis : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_GetMinDis() {
-      ::grpc::Service::MarkMethodRawCallback(0,
+    ExperimentalWithRawCallbackMethod_GetMinDis() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(0,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetMinDis(context, request, response); }));
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetMinDis(context, request, response); }));
     }
-    ~WithRawCallbackMethod_GetMinDis() override {
+    ~ExperimentalWithRawCallbackMethod_GetMinDis() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
@@ -200,8 +246,14 @@ class GetMimDisService final {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* GetMinDis(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* GetMinDis(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_GetMinDis : public BaseClass {

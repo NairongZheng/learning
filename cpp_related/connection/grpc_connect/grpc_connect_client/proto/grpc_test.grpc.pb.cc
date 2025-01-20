@@ -27,23 +27,23 @@ static const char* GetMimDisService_method_names[] = {
 
 std::unique_ptr< GetMimDisService::Stub> GetMimDisService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
   (void)options;
-  std::unique_ptr< GetMimDisService::Stub> stub(new GetMimDisService::Stub(channel, options));
+  std::unique_ptr< GetMimDisService::Stub> stub(new GetMimDisService::Stub(channel));
   return stub;
 }
 
-GetMimDisService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_GetMinDis_(GetMimDisService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+GetMimDisService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
+  : channel_(channel), rpcmethod_GetMinDis_(GetMimDisService_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status GetMimDisService::Stub::GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq& request, ::grpc_test::GetMinDisRsp* response) {
   return ::grpc::internal::BlockingUnaryCall< ::grpc_test::GetMinDisReq, ::grpc_test::GetMinDisRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetMinDis_, context, request, response);
 }
 
-void GetMimDisService::Stub::async::GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, std::function<void(::grpc::Status)> f) {
+void GetMimDisService::Stub::experimental_async::GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, std::function<void(::grpc::Status)> f) {
   ::grpc::internal::CallbackUnaryCall< ::grpc_test::GetMinDisReq, ::grpc_test::GetMinDisRsp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetMinDis_, context, request, response, std::move(f));
 }
 
-void GetMimDisService::Stub::async::GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, ::grpc::ClientUnaryReactor* reactor) {
+void GetMimDisService::Stub::experimental_async::GetMinDis(::grpc::ClientContext* context, const ::grpc_test::GetMinDisReq* request, ::grpc_test::GetMinDisRsp* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
   ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetMinDis_, context, request, response, reactor);
 }
 
