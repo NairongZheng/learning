@@ -1,5 +1,5 @@
 """
-测试, 注意看两个post的传参
+测试, 注意看两个post的传参（改成了都用json传了，也可以用data传）
 """
 import requests
 
