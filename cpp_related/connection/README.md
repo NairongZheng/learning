@@ -8,13 +8,16 @@
     - [编译openssl](#编译openssl)
     - [cmake grpc](#cmake-grpc)
     - [Visual Studio build grpc](#visual-studio-build-grpc)
-    - [使用grpc的项目配置](#使用grpc的项目配置)
+  - [windows使用grpc的项目](#windows使用grpc的项目)
+    - [使用visual studio](#使用visual-studio)
+    - [使用cmake](#使用cmake)
 
 
 ## 包含
 - tcp_and_udp: 很基础的tcp/udp传输
 - grpc_connect: grpc通信(proto)
 - grpc_connect2：grpc通信(proto)
+- http_connect：http通信
 
 
 ## grpc文件语法
@@ -168,7 +171,9 @@ for (auto& vector : *point_list) {
     <img src="../../img/20250117_vs_build_out2.png" alt="openssl_nmake_install">
 </div>
 
-### 使用grpc的项目配置
+## windows使用grpc的项目
+
+### 使用visual studio
 1. 创建项目：在 visual studio 创建一个控制台项目，然后将编写 proto 文件，并将其添加到资源文件中。
 2. 编译proto文件：`D:\code\grpc\cmake_out\third_party\protobuf\Debug\protoc.exe -I=. --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=D:\code\grpc\cmake_out\Debug\grpc_cpp_plugin.exe grpc_test.proto`，其中：
    1. `protoc.exe` 是在前面 cmake grpc 时候的输出路径的第三方库文件夹里的 protobuf 中（也可以将其配置到环境变量中）
@@ -288,3 +293,82 @@ absl_time_zone.lib
 absl_statusor.lib
 re2.lib
 ```
+
+### 使用cmake
+也可以直接使用cmake来编译项目，`grpc_connect_server` 的项目结构如下：
+```bash
+├── grpc_connect_server.cpp
+└── proto
+    ├── grpc_test.grpc.pb.cc
+    ├── grpc_test.grpc.pb.h
+    ├── grpc_test.pb.cc
+    ├── grpc_test.pb.h
+    └── grpc_test.proto
+```
+1.  `.pb.cc` 跟 `.pb.h` 文件生成：在 `proto` 文件夹中使用命令 `D:\code\grpc\cmake_out\third_party\protobuf\Debug\protoc.exe -I=. --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=D:\code\grpc\cmake_out\Debug\grpc_cpp_plugin.exe grpc_test.proto` 生成。
+2.  编写 `CmakeLists.txt` （可以详细去看看）
+3.  编译：可以用 `cmake` 的 `gui` 进行 `make`，再去 `vs` 进行 `build`，就跟前面编译 `grpc` 一样。也可以直接用命令行，如下：
+
+```bash
+cd D:\code\learning\cpp_related\connection\grpc_connect\grpc_connect_server
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Debug
+# 项目就不使用 install 命令了，所以对应的 CMakeLists.txt 中也对应没有 install 的选项配置
+```
+
+编译成功就会在文件夹 `build\Debug` 下生成对应的 `.exe` 文件
+
+
+
+<!-- 
+## linux配置c++的grpc
+
+（以下以我的WSL路径`/opt`作为示例介绍）
+
+### 下载相关依赖
+
+1. 下载相关软件
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install protobuf-compiler
+sudo apt install libssl-dev
+sudo apt install build-essential autoconf libtool pkg-config cmake git
+```
+
+2. grpc
+   1. [官网](https://github.com/grpc/grpc/tree/master)克隆：`git clone https://github.com/grpc/grpc.git`
+   2. 更新子模块：`cd /opt/grpc` && `git submodule update --init`
+
+
+### 编译grpc
+```bash
+cd /opt/grpc
+mkdir -p cmake/build
+cd cmake/build
+cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local ../..
+make
+sudo make install
+```
+这会将 `gRPC` 安装到 `/usr/local` 目录中。
+
+需要将 `/usr/local/bin` 和 `/usr/local/lib` 添加到环境变量中，以确保可以在命令行中访问 `gRPC` 的可执行文件和库。
+编辑 `~/.bashrc`，并添加以下内容:
+```bash
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+```
+然后再重新加载配置文件：`source ~/.bashrc`
+
+### 项目示例
+（我把`cpp_related\connection\grpc_connect`拷贝到`/tmp/code/grpc_connect`做示例）
+
+server：
+```bash
+cd /tmp/code/grpc_connect/grpc_connect_server/proto
+/opt/grpc/cmake/build/third_party/protobuf/protoc --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/opt/grpc/cmake/build/grpc_cpp_plugin grpc_test.proto # 编译proto文件（最好一样指定路径，不然可能会跟python安装的冲突）
+cd /tmp/code/grpc_connect/grpc_connect_server
+g++ -std=c++14 -I/usr/local/include proto/grpc_test.pb.cc proto/grpc_test.grpc.pb.cc -L/usr/local/lib -lgrpc++ -lprotobuf -lpthread -o grpc_connect_server
+``` -->
