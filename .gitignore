@@ -4,3 +4,4 @@ tmp.py
 *.exe
 .vs
 .vscode
+build
