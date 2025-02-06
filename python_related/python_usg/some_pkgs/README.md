@@ -1,5 +1,12 @@
-# some_pkgs一些包的用法
+- [总览](#总览)
+- [pandas](#pandas)
+- [loguru](#loguru)
+- [re](#re)
+- [PIL](#pil)
+- [cv2](#cv2)
 
+
+## 总览
 1. s1_enum.py：枚举
 2. s2_dataclass.py：数据类(装饰器实现)
 3. s3_pydantic.py：数据验证和设置管理库
@@ -11,6 +18,8 @@
 9. s9_bs：爬虫
 10. s10_scikit-learn：机器学习与scikit-learn
 11. s11_re.py：正则表达式
+12. s12_PIL.py：PIL图像处理
+13. s13_cv2.py：cv2图像处理
 
 
 ## pandas
@@ -58,3 +67,44 @@
    12. `{}`：大括号用于定义量词，指定前面的元素可以出现的次数。它允许你指定一个范围或确切的次数。
        1. `{n}`：匹配前面的字符n次
        2. `{n,m}`：匹配前面的字符n到m次
+
+## PIL
+1. 打开图片：`Image.open(path)`
+2. 显示图片：`img.show()`
+3. 获取信息：
+   1. 尺寸（w, h）：`img.size`
+   2. 模式（RGB、RGBA、L）：`img.mode`
+   3. 格式（PNG、JEPG）：`img.format`
+4. 调整大小：`img.resize((w, h))`
+5. 裁剪：`img.crop((left, top, right, bottom))`
+6. 旋转：`img.rotate(angle)`
+7. 翻转：`img.transpose(Image.FLIP_LEFT_RIGHT)`
+8. 颜色转换：`img.convert("L")`（灰度）
+9.  调整亮度：`ImageEnhance.Brightness(img).enhance(value)`
+10. 添加文本：`ImageDraw.Draw(img).text(position, text, fill, font)`
+11. 保存图片：`img.save(filename, format, quality=value)`
+
+## cv2
+1. 读取图片：`cv2.imread(path, mode)`
+2. 显示图片：`cv2.imshow("Window_name", img)`
+3. 获取信息：
+   1. 尺寸（h, w, c）：`img.shape`
+   2. 像素总数：`img.size`
+   3. 数据类型：`img.dtype`
+4. 调整大小：`cv2.resize(img, (w, h))`
+5. 裁剪：`img[y1:y2, x1:x2]`
+6. 旋转：`cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)`
+7. 翻转：`cv2.flip(img, 1)`
+   1. 水平翻转：1
+   2. 垂直翻转：0
+   3. 水平垂直翻转：-1
+8.  颜色转换：`cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)`
+9.  画图：
+    1.  画直线（起点, 终点, 颜色, 线宽）：`cv2.line(img, (50, 50), (200, 50), (0, 255, 0), 3)`
+    2.  画矩形（左上角, 右下角, 颜色, 线宽）：`cv2.rectangle(img, (50, 50), (200, 150), (255, 0, 0), 3)`
+    3.  画圆（圆心, 半径, 颜色, 线宽）：`cv2.circle(img, (150, 150), 50, (0, 0, 255), -1)`
+10. 加文字（图片, 文字, 左上角, 字体, 字体大小, 颜色, 字体粗细）：`cv2.putText(img, "Hello, OpenCV!", (50, 200), font, 1, (0, 255, 255), 2)`
+11. 保存图片：`cv2.imwrite("save_path", img)`
+12. 模糊：`cv2.GaussianBlur()`
+13. 边缘检测：`cv2.Canny()`
+14. 读取视频：`cv2.VideoCapture()`
