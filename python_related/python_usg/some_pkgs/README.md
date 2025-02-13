@@ -20,6 +20,7 @@
 11. s11_re.py：正则表达式
 12. s12_PIL.py：PIL图像处理
 13. s13_cv2.py：cv2图像处理
+14. s14_fastapi：fastapi（还有例子可见[`python_related/connection/http_connect/fastapi_base/`](../../../python_related/connection/http_connect/fastapi_base/)）
 
 
 ## pandas
