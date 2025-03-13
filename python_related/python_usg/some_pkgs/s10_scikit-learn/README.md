@@ -1,4 +1,4 @@
-[参考链接](https://github.com/NairongZheng/notes/blob/main/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A02.md)
+[参考链接](https://github.com/NairongZheng/notes/blob/main/ai_related/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A02.md)
 [TOC]
 ## 线性回归
 回归分析：拟合一条曲线，让图中红色线段加起来的和最小。
