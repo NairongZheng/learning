@@ -39,7 +39,7 @@ def custom_decorator(action):
     return decorator_factory
 
 
-@decorator_factory()
+@decorator_factory
 def get_numbers1(number_list=[1, 2, 3, 4, 5]):
     return number_list
 
