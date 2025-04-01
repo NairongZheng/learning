@@ -1,5 +1,5 @@
 # array数组或者字符串
-- [参考链接](https://labuladong.github.io/algo/di-yi-zhan-da78c/shou-ba-sh-48c1d/er-wei-shu-150fb/)
+- [参考链接](https://labuladong.online/algo/essential-technique/array-two-pointers-summary-2)
 - sliding_window：滑动窗口
 - binary_srarch：二分查找
 - sorting：排序相关算法

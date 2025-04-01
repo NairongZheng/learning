@@ -46,18 +46,24 @@ class Solution:
         #     result += 1
         # return result
 
-# 构建一棵树
-#       1
-#            2
-#         4    3
-#            6   5
-node1, node2, node3 = TreeNode(1), TreeNode(2), TreeNode(4)
-node4, node5, node6 = TreeNode(3), TreeNode(6), TreeNode(5)
 
-node1.right = node2
-node2.left, node2.right = node3, node4
-node4.left, node4.right = node5, node6
+def main():
+    # 构建一棵树
+    #       1
+    #            2
+    #         4    3
+    #            6   5
+    node1, node2, node3 = TreeNode(1), TreeNode(2), TreeNode(4)
+    node4, node5, node6 = TreeNode(3), TreeNode(6), TreeNode(5)
 
-aaa = Solution()
-bbb = aaa.minDepth(node1)
-print(bbb)          # 3
+    node1.right = node2
+    node2.left, node2.right = node3, node4
+    node4.left, node4.right = node5, node6
+
+    aaa = Solution()
+    bbb = aaa.minDepth(node1)
+    print(bbb)          # 3
+
+
+if __name__ == '__main__':
+    main()

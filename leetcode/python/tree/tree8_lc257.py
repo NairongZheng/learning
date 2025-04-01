@@ -56,16 +56,22 @@ class Solution:
                 path_stack.append(path + '->' + str(cur.left.val))
         return result
 
-# 构建一棵树
-#       3
-#   9       20
-#         15    7
-node1, node2, node3 = TreeNode(3), TreeNode(9), TreeNode(20)
-node4, node5 = TreeNode(15), TreeNode(7)
 
-node1.left, node1.right = node2, node3
-node3.left, node3.right = node4, node5
+def main():
+    # 构建一棵树
+    #       3
+    #   9       20
+    #         15    7
+    node1, node2, node3 = TreeNode(3), TreeNode(9), TreeNode(20)
+    node4, node5 = TreeNode(15), TreeNode(7)
 
-aaa = Solution()
-bbb = aaa.binaryTreePaths(node1)
-print(bbb)          # ['3->9', '3->20->15', '3->20->7']
+    node1.left, node1.right = node2, node3
+    node3.left, node3.right = node4, node5
+
+    aaa = Solution()
+    bbb = aaa.binaryTreePaths(node1)
+    print(bbb)          # ['3->9', '3->20->15', '3->20->7']
+
+
+if __name__ == '__main__':
+    main()
