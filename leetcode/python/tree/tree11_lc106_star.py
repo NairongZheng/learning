@@ -38,21 +38,27 @@ class Solution:
 
         return root
 
-# 树如下
-#       3
-#   9       20
-#         15    7
-node1, node2, node3 = TreeNode(3), TreeNode(9), TreeNode(20)
-node4, node5 = TreeNode(15), TreeNode(7)
 
-node1.left, node1.right = node2, node3
-node3.left, node3.right = node4, node5
+def main():
+    # 树如下
+    #       3
+    #   9       20
+    #         15    7
+    node1, node2, node3 = TreeNode(3), TreeNode(9), TreeNode(20)
+    node4, node5 = TreeNode(15), TreeNode(7)
 
-aaa = Solution()
-bbb = aaa.buildTree(inorder=[9, 3, 15, 20, 7], postorder=[9, 15, 7, 20, 3])
+    node1.left, node1.right = node2, node3
+    node3.left, node3.right = node4, node5
 
-# bbb就是构建好啦，为了检验对不对，用前序遍历打印出来看看
-from tree1_lc144 import Solution as S
-ccc = S()
-ddd = ccc.preorderTraversal(bbb)
-print(ddd)      # [3, 9, 20, 15, 7]
+    aaa = Solution()
+    bbb = aaa.buildTree(inorder=[9, 3, 15, 20, 7], postorder=[9, 15, 7, 20, 3])
+
+    # bbb就是构建好啦，为了检验对不对，用前序遍历打印出来看看
+    from tree1_lc144 import Solution as S
+    ccc = S()
+    ddd = ccc.preorderTraversal(bbb)
+    print(ddd)      # [3, 9, 20, 15, 7]
+
+
+if __name__ == '__main__':
+    main()

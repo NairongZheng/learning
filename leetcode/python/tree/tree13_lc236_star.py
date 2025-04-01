@@ -35,7 +35,25 @@ def lowestCommonAncestor(root, p, q):
     if left and right:      # 情况一：如果left 和 right都不为空，说明此时root就是最近公共节点。
         return root
     if left is None and right is None:                # 情况二：都为None，返回None
-        return left
+        return None
     return left if left else right             # 情况三：哪个非空就返回哪个
 
-    # # 情况二其实可以跟情况三合并（情况二删了也可以）：
+    # # 情况二其实可以跟情况三合并（情况二删了也可以）
+
+
+def main():
+    # 模拟构建一棵树
+    from tree11_lc106_star import Solution as Solution_build
+    from tree4_lc102 import Solution as Solution_print
+    inorder = [8, 4, 9, 2, 5, 1, 6, 3, 7]
+    postorder = [8, 9, 4, 5, 2, 6, 7, 3, 1]
+    root = Solution_build().buildTree(inorder, postorder)
+    p = root.left.left.left # 8
+    q = root.left.right # 5
+    res_root = lowestCommonAncestor(root, p, q)
+    res_list = Solution_print().levelOrder(res_root)
+    print(res_list) # [[2], [4, 5], [8, 9]]
+
+
+if __name__ == '__main__':
+    main()

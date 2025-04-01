@@ -42,17 +42,23 @@ class Solution:
         #         result.append(cur.val)
         # return result
 
-# 构建一棵树
-#       5
-#   4       6
-# 1   2   7   8
-node1, node2, node3, node4 = TreeNode(5), TreeNode(4), TreeNode(6), TreeNode(1)
-node5, node6, node7 = TreeNode(2), TreeNode(7), TreeNode(8)
 
-node1.left, node1.right = node2, node3
-node2.left, node2.right = node4, node5
-node3.left, node3.right = node6, node7
+def main():
+    # 构建一棵树
+    #       5
+    #   4       6
+    # 1   2   7   8
+    node1, node2, node3, node4 = TreeNode(5), TreeNode(4), TreeNode(6), TreeNode(1)
+    node5, node6, node7 = TreeNode(2), TreeNode(7), TreeNode(8)
 
-aaa = Solution()
-bbb = aaa.inorderTraversal(node1)
-print(bbb)      # [1, 4, 2, 5, 7, 6, 8]
+    node1.left, node1.right = node2, node3
+    node2.left, node2.right = node4, node5
+    node3.left, node3.right = node6, node7
+
+    aaa = Solution()
+    bbb = aaa.inorderTraversal(node1)
+    print(bbb)      # [1, 4, 2, 5, 7, 6, 8]
+
+
+if __name__ == '__main__':
+    main()
