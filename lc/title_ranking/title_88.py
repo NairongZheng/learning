@@ -1,3 +1,4 @@
+# https://leetcode.cn/problems/merge-sorted-array/description
 from typing import List
 
 
@@ -27,9 +28,9 @@ class Solution:
 
 def main():
     test_list = [
-        [[1,2,3,0,0,0], 3, [2,5,6], 3],
-        [[1], 1, [], 0],
-        [[0], 0, [1], 1]
+        [[1,2,3,0,0,0], 3, [2,5,6], 3], # [1, 2, 2, 3, 5, 6]
+        [[1], 1, [], 0], # [1]
+        [[0], 0, [1], 1], # [1]
     ]
     for nums1, m, nums2, n in test_list:
         Solution().merge(nums1, m, nums2, n)
