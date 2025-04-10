@@ -16,4 +16,4 @@
    1. connection：各种通信相关案例
 5. frontend_related：前端相关
    1. html：html和css
-6. leetcode：刷题
+6. lc：leetcode刷题
