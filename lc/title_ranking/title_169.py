@@ -1,4 +1,5 @@
 # https://leetcode.cn/problems/majority-element
+
 from typing import List
 
 
