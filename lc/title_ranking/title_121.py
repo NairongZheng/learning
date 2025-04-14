@@ -14,7 +14,7 @@ class Solution:
             dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]) # 今天不持有=max(上一天就不持有, 上一天持有今天卖出)
         return dp[-1][1]
         
-        # # 非动态规划解法（只能买一次卖一次，所以比较简单）
+        # # 非动态规划解法
         # min_price = float("inf")
         # max_profit = 0
         # for price in prices:
