@@ -6,15 +6,11 @@
 
 # 代码一
 class myHeap:
-    """
-        push：往堆中添加元素
-        pop：弹出堆顶元素
-    """
     def __init__(self):
         self.heap = []
-    
 
     def push(self, x):      # 用到了上滤
+        """往堆中添加元素"""
         self.heap.append(x)
         index = len(self.heap) - 1
         while index > 0:
@@ -22,9 +18,9 @@ class myHeap:
             if self.heap[father_index] < x:
                 self.heap[father_index], self.heap[index] = self.heap[index], self.heap[father_index]
             index = father_index
-    
 
     def heapify(self, n, i):    # 用到了下滤
+        """堆化"""
         largest = i             # 当前维护的节点下标为i，假设是最大的
         left = 2 * i + 1        # 左节点
         right = 2 * i + 2       # 右节点
@@ -37,27 +33,34 @@ class myHeap:
         
         if largest != i:
             self.heap[i], self.heap[largest] = self.heap[largest], self.heap[i]     # 交换，下标i位置变成三个节点中的最大值
-            self.heapify(n, largest)   # 这时候largest就是维护的i的左节点或者右节点，递归继续向下让每个子树都是打根堆
-
+            self.heapify(n, largest)   # 这时候largest就是维护的i的左节点或者右节点，递归继续向下让每个子树都是大根堆
     
     def pop(self):
+        """弹出堆顶元素"""
         index = len(self.heap) - 1
         self.heap[0], self.heap[index] = self.heap[index], self.heap[0]
         tmp = self.heap.pop()
         self.heapify(len(self.heap) - 1, 0)
         return tmp
 
-aaa = myHeap()
-aaa.push(1)
-aaa.push(7)
-aaa.push(2)
-aaa.push(10)
-aaa.push(7)
-aaa.push(5)
-aaa.push(4)
-a1 = aaa.pop()
-a2 = aaa.pop()
-print(a1, a2)       # 10 7
+
+def main():
+    aaa = myHeap()
+    aaa.push(1)
+    aaa.push(7)
+    aaa.push(2)
+    aaa.push(10)
+    aaa.push(7)
+    aaa.push(5)
+    aaa.push(4)
+    a1 = aaa.pop()
+    a2 = aaa.pop()
+    print(a1, a2)       # 10 7
+
+
+if __name__ == '__main__':
+    main()
+
 
 # 堆的基本知识
 # 堆是一个完全二叉树(只允许最后一排不满，且最后一行必须从左往右排，元素之间不可以有间隔)
