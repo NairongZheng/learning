@@ -1,4 +1,5 @@
 - [总览](#总览)
+- [super继承](#super继承)
 - [pandas](#pandas)
 - [loguru](#loguru)
 - [re](#re)
@@ -10,7 +11,7 @@
 1. s1_enum.py：枚举
 2. s2_dataclass.py：数据类(装饰器实现)
 3. s3_pydantic.py：数据验证和设置管理库
-4. s4_namespace.py：命名空间
+4. s4_namespace：命名空间
 5. s5_pandas.py：pandas
 6. s6_logging：日志库logging的使用
 7. s7_loguru：日志库loguru的使用
@@ -21,6 +22,60 @@
 12. s12_PIL.py：PIL图像处理
 13. s13_cv2.py：cv2图像处理
 14. s14_fastapi：fastapi（还有例子可见[`python_related/connection/http_connect/fastapi_base/`](../../../python_related/connection/http_connect/fastapi_base/)）
+
+
+## super继承
+1. 基本用法
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        print("Animal speaks")
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)  # 调用父类的 __init__ 方法
+        self.breed = breed
+
+    def speak(self):
+        super().speak()  # 调用父类的 speak 方法
+        print("Dog barks")
+```
+
+2. 多重继承
+```python
+# 多重继承mro
+class A:
+    def method(self):
+        print("Method in A")
+
+class B(A):
+    def method(self):
+        super().method()
+        print("Method in B")
+
+class C(A):
+    def method(self):
+        super().method()
+        print("Method in C")
+
+class D(B, C):
+    def method(self):
+        super().method()
+        print("Method in D")
+
+if __name__ == '__main__:
+    d = D()
+    d.method()
+
+    # # 输出
+    # Method in A
+    # Method in C
+    # Method in B
+    # Method in D
+```
 
 
 ## pandas
