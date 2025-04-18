@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from build_namespace import build_namespace, pretty_print_namespace
+from namespace_utils import NamespaceUtils
 
 
 # functions
@@ -49,19 +49,21 @@ def dict2namespace():
             "sum_numbers": sum_numbers
         }
     }
-    adict_namespace = build_namespace(variables)
+    adict_namespace = NamespaceUtils.build_namespace(variables) # 字典转化成命名空间
     return adict_namespace
 
 
 def main():
     # 写类直接构建返回，比较麻烦
     fake_vars = FakeVars()
-    variables_1 = fake_vars.set_vars()
-    pretty_print_namespace(variables_1)
+    variables_1_namespace = fake_vars.set_vars()
+    print(variables_1_namespace)
+    variables_1_dict = NamespaceUtils.namespace_to_dict(variables_1_namespace) # 命名空间转化成字典
+    print(variables_1_dict)
     
     # 用字典自动转换，很方便
-    variables_2 = dict2namespace()
-    pretty_print_namespace(variables_2)
+    variables_2_namespace = dict2namespace()
+    # NamespaceUtils.pretty_print_namespace(variables_2_namespace)
     pass
 
 
