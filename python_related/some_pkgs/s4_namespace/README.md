@@ -2,6 +2,15 @@
 
 可以用命名空间模拟一些嵌套的变量，命名空间跟字典互转
 
+`./namespace_utiles.py`中包含了几个函数：
+
+- dict_to_namespace：将字典转成命名空间
+- namespace_to_dict：将命名空间转成字典
+- pretty_print_namespace：打印命名空间
+- load_json：读取json文件，构建namespace
+- load_yaml：读取yaml文件，构建namespace
+- save_to_json：将命名空间保存成json
+
 **字典转成命名空间**
 
 ```python

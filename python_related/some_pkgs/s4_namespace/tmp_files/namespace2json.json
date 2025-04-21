@@ -1,0 +1,18 @@
+{
+    "general_vars": {
+        "type": "dict2namespace",
+        "version": "1.1.1",
+        "date": "20250418"
+    },
+    "people_related": {
+        "people_num": 2,
+        "people_name_list": [
+            null,
+            null
+        ]
+    },
+    "functions": {
+        "greet": "<function greet at 0x000001A1530DC900>",
+        "sum_numbers": "<function sum_numbers at 0x000001A15311AAC0>"
+    }
+}
