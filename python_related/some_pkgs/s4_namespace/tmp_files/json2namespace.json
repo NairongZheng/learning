@@ -1,0 +1,11 @@
+{
+    "general_vars": {
+        "type": "json2namespace",
+        "version": "1.1.1",
+        "date": "20250421"
+    },
+    "people_related": {
+        "people_num": 2,
+        "people_name_list": [null, null]
+    }
+}

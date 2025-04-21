@@ -1,5 +1,6 @@
-from types import SimpleNamespace
 from typing import Any, Dict, Union
+import json, yaml, datetime, decimal
+from types import SimpleNamespace
 
 
 class NamespaceUtils:
@@ -60,3 +61,52 @@ class NamespaceUtils:
                     print(f"{prefix}{key}: {value}")
         else:
             print(f"{prefix}{ns}")
+    
+    @staticmethod
+    def load_json(file_path: str, verbose: bool = False) -> SimpleNamespace:
+        """
+        读取json文件，构建namespace
+        """
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return NamespaceUtils.build_namespace(data, verbose)
+
+    @staticmethod
+    def load_yaml(file_path: str, verbose: bool = False) -> SimpleNamespace:
+        """
+        读取yaml文件，构建namespace
+        """
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+        return NamespaceUtils.build_namespace(data, verbose)
+
+    @staticmethod
+    def save_to_json(ns: SimpleNamespace, file_path: str) -> None:
+        """
+        将命名空间保存成json（支持函数转为字符串）
+        """
+        dict_data = NamespaceUtils.namespace_to_dict(ns)
+        
+        # def fallback(obj):
+        #     if callable(obj):
+        #         return f"<function:{obj.__name__}>"
+        #     return str(obj)  # fallback for other non-serializable types
+
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(dict_data, f, indent=4, ensure_ascii=False, default=NamespaceUtils.safe_json_default)
+    
+    @staticmethod
+    def safe_json_default(obj):
+        """
+        通用 fallback，用于 json.dump 的 default 参数。
+        将不可序列化的对象转为可读字符串。
+        """
+        if callable(obj):
+            return f"<function:{obj.__name__}>"
+        elif isinstance(obj, (datetime.datetime, datetime.date)):
+            return obj.isoformat()
+        elif isinstance(obj, decimal.Decimal):
+            return float(obj)
+        elif hasattr(obj, '__dict__'):
+            return {k: NamespaceUtils.safe_json_default(v) for k, v in vars(obj).items()}
+        return str(obj)  # 最终兜底
