@@ -4,7 +4,7 @@
         选一个基准元素（pivot）
         划分（partition）：把数组分成两部分：左边都是小于等于 pivot 的元素；右边都是大于 pivot 的元素；
         递归排序左右两边
-    （快排有不同实现，具体复杂度有区别。可以查看：`../../python/array/sorting/quick_sort.py`）
+    （快排有不同实现，具体复杂度有区别。可以查看：`lc/python/array/sorting/quick_sort.py`）
     时间：最坏 O(n²)（极端划分，比如已经有序）；最好 O(nlogn) （每次均匀划分）
     空间：O(logn)（递归栈）/O(n)（使用额外空间）
     稳定性：不稳定
