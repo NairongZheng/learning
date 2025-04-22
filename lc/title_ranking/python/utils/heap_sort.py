@@ -14,7 +14,7 @@
 def heapify(nums, n, i):
     """
     堆化，用到了下滤
-    堆的基础知识可以查看`../../python/heap/heap1_star_star.py`
+    堆的基础知识可以查看`lc/python/heap/heap1_star_star.py`
     """
     largest = i # 当前维护的节点下标为i，假设是最大的
     left = 2 * i + 1  # 左子节点
