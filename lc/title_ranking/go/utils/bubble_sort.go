@@ -5,13 +5,13 @@ import (
 )
 
 // 泛型冒泡排序：支持 int、float64、string 等有序类型
-func BubbleSort[T constraints.Ordered](arr []T) []T {
-	n := len(arr)
+func BubbleSort[T constraints.Ordered](nums []T) []T {
+	n := len(nums)
 	for i := 0; i < n-1; i++ {
 		swapped := false
 		for j := 0; j < n-1-i; j++ {
-			if arr[j] > arr[j+1] {
-				arr[j], arr[j+1] = arr[j+1], arr[j]
+			if nums[j] > nums[j+1] {
+				nums[j], nums[j+1] = nums[j+1], nums[j]
 				swapped = true
 			}
 		}
@@ -19,5 +19,5 @@ func BubbleSort[T constraints.Ordered](arr []T) []T {
 			break
 		}
 	}
-	return arr
+	return nums
 }
