@@ -12,7 +12,7 @@ def shell_sort(nums):
     gap = len(nums) // 2
     while gap >= 1:
         for i in range(gap, len(nums)):
-            while i > 0: # 类似插入排序，只是每次跳 gap 步
+            while i >= gap: # 类似插入排序，只是每次跳 gap 步，确保 i - gap 不会越界
                 if nums[i] < nums[i - gap]:
                     nums[i], nums[i - gap] = nums[i - gap], nums[i]
                     i -= gap

@@ -2,15 +2,15 @@ package utils
 
 import "golang.org/x/exp/constraints"
 
-func SelectedSort[T constraints.Ordered](arr []T) []T {
-	for i := 0; i < len(arr); i++ {
+func SelectedSort[T constraints.Ordered](nums []T) []T {
+	for i := 0; i < len(nums); i++ {
 		min_index := i
-		for j := i + 1; j < len(arr); j++ {
-			if arr[j] < arr[min_index] {
+		for j := i + 1; j < len(nums); j++ {
+			if nums[j] < nums[min_index] {
 				min_index = j
 			}
 		}
-		arr[i], arr[min_index] = arr[min_index], arr[i]
+		nums[i], nums[min_index] = nums[min_index], nums[i]
 	}
-	return arr
+	return nums
 }
