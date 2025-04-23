@@ -11,3 +11,5 @@
 - selected_sort.go：选择排序
 - inserted_sort.go：插入排序
 - shell_sort.go：希尔排序
+- merge_sort.go：归并排序
+- quick_sort.go：快速排序
