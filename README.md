@@ -15,7 +15,8 @@
 3. cpp_related：cpp编程相关
    1. connection：各种通信相关案例
 4. go_related：go编程相关
-   1. connection：各种通信相关案例
+   1. simple_go：简单的go示例
+   2. connection：各种通信相关案例
 5. frontend_related：前端相关
    1. html：html和css
 6. lc：leetcode刷题
