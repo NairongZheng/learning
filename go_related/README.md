@@ -1,6 +1,7 @@
 # go相关
 
-1. connection：各种通信相关案例
+1. simple_go：简单的go示例
+2. connection：各种通信相关案例
 
 
 ## 高亮设置

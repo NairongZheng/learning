@@ -5,3 +5,4 @@ tmp.py
 .vs
 .vscode
 build
+bin
