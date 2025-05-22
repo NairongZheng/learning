@@ -27,19 +27,14 @@ run-bin:
 
 .PHONY: test
 test:
-	go test ./...
+	go test -v ./...
 
-.PHONY: fmt
-fmt:
-	go fmt ./...
+.PHONY: run-test
+run-test: build run test
 
-.PHONY: lint
-lint:
-	golangci-lint run
-
-.PHONY: install-linter
-install-linter:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+.PHONY: proto
+proto:
+	sh build_proto.sh
 
 .PHONY: clean
 clean:

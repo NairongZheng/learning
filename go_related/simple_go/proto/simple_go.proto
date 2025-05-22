@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package simpleGoProto;
+
+option go_package = "github.com/nairongzheng/simple_go/proto";
+
+message Point {
+    int32 x = 1;
+    int32 y = 2;
+}
+
+message SimpleGoRequest {
+    int32 id = 1;
+    string content = 2;
+    repeated Point points = 3;
+}
+
+message SimpleGoResponse {
+    int32 id = 1;
+    string content = 2;
+    repeated int32 addresult = 3;
+}
