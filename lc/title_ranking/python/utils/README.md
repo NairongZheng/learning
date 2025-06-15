@@ -2,6 +2,7 @@
 - {xxx}_sort.py：各种排序算法
 - reverse_nums.py：翻转数组
 - lcp_str.py：两个字符串的最长公共前缀
+- build_cycle_listnode.py：构造环状链表
 
 
 **比较型排序**
