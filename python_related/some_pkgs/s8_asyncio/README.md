@@ -1,5 +1,7 @@
 # asyncio协程
 
+**可以直接跑一下`example.py`看看效果。**
+
 [参考视频](https://www.bilibili.com/video/BV1oa411b7c9)
 (下面的内容有点问题，但是不影响理解)
 
