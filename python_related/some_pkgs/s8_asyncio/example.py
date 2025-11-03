@@ -5,6 +5,7 @@ import time
 import aiofiles
 import json
 import os
+from tqdm.asyncio import tqdm
 
 # 目标URL列表（这里用 httpbin 测试服务，你可以替换为真实接口）
 URLS = ["https://httpbin.org/get?i={}".format(i) for i in range(1, 51)]
@@ -14,6 +15,7 @@ class AsyncClient:
     def __init__(self, file_path="async_results.json"):
         self.file_path = file_path
         self.file_lock = asyncio.Lock()
+        self.results_buffer = []
     
     async def load_results_async(self):
         """异步加载文件（带锁）"""
@@ -93,12 +95,52 @@ class AsyncClient:
         # 异步写入文件
         await self.save_results_async(results)
         print(f"[异步版] 已保存结果到 {self.file_path}")
+    
+    async def run_async_new(self, async_num: int = 30):
+        """
+        使用semaphore控制并发数，使用tqdm显示进度条
+        使用as_completed就绪即写，减少总体等待
+        """
+        start = time.time()
+        semaphore = asyncio.Semaphore(async_num)
+        tasks = []
+
+        async with aiohttp.ClientSession() as session:
+            async def fetch_with_semaphore(url):
+                async with semaphore:
+                    return await self.fetch_async(session, url)
+
+            for url in URLS:
+                task = asyncio.create_task(fetch_with_semaphore(url))
+                tasks.append(task)
+
+            pbar = tqdm(total=len(tasks), desc="异步请求处理中", unit="条")
+
+            for coro in asyncio.as_completed(tasks):
+                try:
+                    result = await coro
+                except Exception as e:
+                    result = {"url": "unknown", "error": str(e)}
+
+                # 用内存列表append模拟保存，并打印当前累计条数
+                self.results_buffer.append(result)
+                print(f"[模拟保存] 当前条数: {len(self.results_buffer)}")
+
+                pbar.update(1)
+
+            pbar.close()
+
+        end = time.time()
+        print(f"[异步版] 共请求 {len(self.results_buffer)} 个接口，用时 {end - start:.2f} 秒")
+        for r in self.results_buffer[:3]:
+            print(r)
 
 
 class SyncClient:
     def __init__(self, file_path="sync_results.json"):
         self.session = requests.Session()
         self.file_path = file_path
+        self.results_buffer = []
     
     def save_results_sync(self, results):
         """同步写入文件"""
@@ -131,8 +173,12 @@ class SyncClient:
         print(f"[同步版] 共请求 {len(results)} 个接口，用时 {end - start:.2f} 秒")
         for r in results[:3]:
             print(r)
-        self.save_results_sync(results)
-        print(f"[同步版] 已保存结果到 {self.file_path}")
+        # self.save_results_sync(results)
+        # print(f"[同步版] 已保存结果到 {self.file_path}")
+        # 内存模拟保存
+        self.results_buffer.extend(results)
+        print(f"[同步版-模拟保存] 当前条数: {len(self.results_buffer)}")
+        print(f"[同步版] 已模拟保存（未写入文件）")
     
     def close(self):
         self.session.close()
@@ -168,7 +214,8 @@ async def test_if_lock():
 def main():
     print("\n=== 开始异步请求 ===")
     async_client = AsyncClient()
-    asyncio.run(async_client.run_async())
+    # asyncio.run(async_client.run_async())
+    asyncio.run(async_client.run_async_new())
 
     print("\n=== 开始同步请求 ===")
     sync_client = SyncClient()
@@ -177,8 +224,8 @@ def main():
     finally:
         sync_client.close()
     
-    print("\n=== 开始测试有无锁写入 ===")
-    asyncio.run(test_if_lock())
+    # print("\n=== 开始测试有无锁写入 ===")
+    # asyncio.run(test_if_lock())
 
 
 if __name__ == "__main__":
