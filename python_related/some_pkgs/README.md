@@ -23,6 +23,7 @@
 13. s13_cv2.py：cv2图像处理
 14. s14_fastapi：fastapi（还有例子可见[`python_related/connection/http_connect/fastapi_base/`](../connection/http_connect/fastapi_base/)）
 15. s15_argparse.py：argparse
+16. s16_tempfile.py：tempfile沙箱
 
 
 ## super继承
