@@ -5,25 +5,53 @@
 - [re](#re)
 - [PIL](#pil)
 - [cv2](#cv2)
+- [requests](#requests)
+- [pathlib](#pathlib)
+- [json](#json)
+- [datetime](#datetime)
+- [collections](#collections)
+- [itertools](#itertools)
 
 
 ## 总览
+
+### 数据处理
 1. s1_enum.py：枚举
 2. s2_dataclass.py：数据类(装饰器实现)
 3. s3_pydantic.py：数据验证和设置管理库
 4. s4_namespace：命名空间
-5. s5_pandas.py：pandas
+5. s5_pandas.py：pandas数据分析
+
+### 日志系统
 6. s6_logging：日志库logging的使用
-7. s7_loguru：日志库loguru的使用
-8. s8_asyncio：协程
-9. s9_bs：爬虫
+7. s7_loguru：日志库loguru的使用（推荐）
+
+### 异步编程
+8. s8_asyncio：协程与异步编程
+
+### 网络爬虫
+9. s9_bs：BeautifulSoup爬虫
+
+### 机器学习
 10. s10_scikit-learn：机器学习与scikit-learn
+
+### 文本与图像处理
 11. s11_re.py：正则表达式
 12. s12_PIL.py：PIL图像处理
-13. s13_cv2.py：cv2图像处理
-14. s14_fastapi：fastapi（还有例子可见[`python_related/connection/http_connect/fastapi_base/`](../connection/http_connect/fastapi_base/)）
-15. s15_argparse.py：argparse
-16. s16_tempfile.py：tempfile沙箱
+13. s13_cv2.py：OpenCV图像处理
+
+### Web框架
+14. s14_fastapi：FastAPI Web框架（还有例子可见[`python_related/connection/http_connect/fastapi_base/`](../connection/http_connect/fastapi_base/)）
+
+### 工具类
+15. s15_argparse.py：命令行参数解析
+16. s16_tempfile.py：临时文件处理
+17. s17_requests.py：HTTP请求库
+18. s18_pathlib.py：现代路径处理
+19. s19_json.py：JSON操作
+20. s20_datetime.py：日期时间处理
+21. s21_collections.py：特殊数据结构（Counter、defaultdict、deque等）
+22. s22_itertools.py：迭代器工具
 
 
 ## super继承
@@ -166,3 +194,118 @@ if __name__ == '__main__:
 12. 模糊：`cv2.GaussianBlur()`
 13. 边缘检测：`cv2.Canny()`
 14. 读取视频：`cv2.VideoCapture()`
+## requests
+HTTP请求库，简单优雅的HTTP客户端。
+1. GET请求：`requests.get(url, params=params, headers=headers)`
+2. POST请求：`requests.post(url, data=data, json=json_data)`
+3. 其他方法：`requests.put()`, `requests.delete()`, `requests.patch()`
+4. 响应对象：
+   1. `response.status_code`：状态码
+   2. `response.text`：文本内容
+   3. `response.json()`：JSON数据
+   4. `response.content`：二进制内容
+   5. `response.headers`：响应头
+5. Session：`session = requests.Session()`，保持会话状态
+6. 超时设置：`timeout=3`
+7. 文件上传：`files={'file': open('file.txt', 'rb')}`
+8. 异常处理：`requests.exceptions.RequestException`
+
+## pathlib
+面向对象的文件系统路径操作，比os.path更现代。
+1. 创建路径：`Path('/home/user/file.txt')`
+2. 路径拼接：`path / 'subdir' / 'file.txt'`
+3. 当前目录：`Path.cwd()`
+4. 用户目录：`Path.home()`
+5. 路径组成：
+   1. `path.parent`：父目录
+   2. `path.name`：文件名
+   3. `path.stem`：文件名（不含扩展名）
+   4. `path.suffix`：扩展名
+6. 文件操作：
+   1. `path.read_text()`：读取文本
+   2. `path.write_text(content)`：写入文本
+   3. `path.exists()`：检查是否存在
+   4. `path.is_file()`：是否是文件
+   5. `path.is_dir()`：是否是目录
+7. 目录操作：
+   1. `path.mkdir(parents=True)`：创建目录
+   2. `path.iterdir()`：遍历目录
+   3. `path.glob('*.txt')`：模式匹配
+   4. `path.rglob('*.txt')`：递归匹配
+
+## json
+JSON编码和解码。
+1. 序列化：
+   1. `json.dumps(obj)`：对象转JSON字符串
+   2. `json.dump(obj, file)`：对象写入文件
+2. 反序列化：
+   1. `json.loads(str)`：JSON字符串转对象
+   2. `json.load(file)`：从文件读取JSON
+3. 常用参数：
+   1. `indent=4`：美化输出
+   2. `ensure_ascii=False`：保留中文
+   3. `sort_keys=True`：排序键
+4. 自定义编码：`json.dumps(obj, cls=CustomEncoder)`
+5. 数据类型映射：
+   1. Python dict ↔ JSON object
+   2. Python list ↔ JSON array
+   3. Python str ↔ JSON string
+   4. Python int/float ↔ JSON number
+   5. Python True/False ↔ JSON true/false
+   6. Python None ↔ JSON null
+
+## datetime
+日期和时间处理。
+1. 创建：
+   1. `datetime.now()`：当前日期时间
+   2. `date.today()`：当前日期
+   3. `datetime(2024, 12, 25, 15, 30)`：指定日期时间
+2. 格式化：
+   1. `dt.strftime('%Y-%m-%d %H:%M:%S')`：格式化输出
+   2. `datetime.strptime(str, format)`：解析字符串
+3. 时间差：
+   1. `timedelta(days=7, hours=3)`：创建时间差
+   2. `dt1 - dt2`：计算差值
+   3. `dt + timedelta(...)`：日期运算
+4. 组成部分：`year`, `month`, `day`, `hour`, `minute`, `second`
+5. 时区：`datetime.now(timezone.utc)`
+6. 时间戳：`dt.timestamp()`，`datetime.fromtimestamp(ts)`
+
+## collections
+特殊容器数据类型。
+1. `Counter`：计数器
+   1. `Counter(list)`：统计元素出现次数
+   2. `most_common(n)`：最常见的n个元素
+2. `defaultdict`：带默认值的字典
+   1. `defaultdict(list)`：默认值为空列表
+   2. `defaultdict(int)`：默认值为0
+3. `deque`：双端队列
+   1. `append(x)`：右端添加
+   2. `appendleft(x)`：左端添加
+   3. `pop()`：右端弹出
+   4. `popleft()`：左端弹出
+4. `namedtuple`：命名元组
+   1. `Point = namedtuple('Point', ['x', 'y'])`
+   2. 可以通过名称访问字段
+5. `OrderedDict`：有序字典（Python 3.7+普通dict也有序）
+6. `ChainMap`：链式字典，多个字典的视图
+
+## itertools
+迭代器工具，高效的迭代器函数。
+1. 无限迭代器：
+   1. `count(start, step)`：无限计数
+   2. `cycle(iterable)`：无限循环
+   3. `repeat(elem, n)`：重复元素
+2. 终止迭代器：
+   1. `chain(*iterables)`：连接多个可迭代对象
+   2. `compress(data, selectors)`：根据选择器过滤
+   3. `islice(iterable, stop)`：切片
+   4. `accumulate(iterable)`：累积操作
+3. 组合迭代器：
+   1. `product(*iterables)`：笛卡尔积
+   2. `permutations(iterable, r)`：排列
+   3. `combinations(iterable, r)`：组合
+4. 其他：
+   1. `groupby(iterable, key)`：分组
+   2. `zip_longest(*iterables)`：长度不等的zip
+   3. `starmap(func, iterable)`：解包参数映射
