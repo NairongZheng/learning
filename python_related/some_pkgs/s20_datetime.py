@@ -178,9 +178,6 @@ def example_timezone():
     utc_now = datetime.now(timezone.utc)
     print(f"UTC时间: {utc_now}")
     
-    # 带时区的时间
-    from datetime import timezone, timedelta
-    
     # 东八区（北京时间）
     tz_beijing = timezone(timedelta(hours=8))
     beijing_now = datetime.now(tz_beijing)
