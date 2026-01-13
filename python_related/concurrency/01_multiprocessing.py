@@ -1,258 +1,151 @@
 """
-多进程示例 - CPU密集型任务
+多进程示例
 
-适用场景：
-- CPU密集型计算（数学运算、加密、图像处理等）
-- 需要绕过GIL限制
-- 充分利用多核CPU
-
-示例任务：
-1. 素数判断（CPU密集型）
-2. 图像处理模拟（CPU密集型）
+两个最常见的场景：
+- 模拟**批量图像处理**（CPU 密集型）
+- 模拟**处理很大的 jsonl 数据**（CPU 密集型解析 / 特征计算）
 """
 
-import time
+import json
 import math
-from multiprocessing import Process, Pool, cpu_count
+import time
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from multiprocessing import cpu_count
+from tqdm import tqdm
 
 
-def is_prime(n):
+# ==================== 场景 1：批量图像处理（模拟） ====================
+def fake_image_process(image_id: int, size: int = 900) -> str:
     """
-    判断是否为素数（CPU密集型计算）
+    模拟图像处理：
+    - 假设有一张 size x size 的图片
+    - 对每个像素做一点“复杂计算”（这里用 sqrt + sin 之类）
     """
-    if n < 2:
-        return False
-    if n == 2:
-        return True
-    if n % 2 == 0:
-        return False
-    
-    sqrt_n = int(math.floor(math.sqrt(n)))
-    for i in range(3, sqrt_n + 1, 2):
-        if n % i == 0:
-            return False
-    return True
-
-
-def find_primes_in_range(start, end):
-    """
-    找出范围内所有素数
-    """
-    primes = []
-    for num in range(start, end):
-        if is_prime(num):
-            primes.append(num)
-    return primes
-
-
-def process_image_task(image_id, size=1000):
-    """
-    模拟图像处理任务（CPU密集型）
-    对一个矩阵进行复杂运算
-    """
-    # 模拟图像数据
-    result = 0
+    total = 0.0
     for i in range(size):
         for j in range(size):
-            result += math.sqrt(i * j + 1)
-    
-    return f"Image {image_id} processed, result: {result:.2f}"
+            total += math.sqrt(i * j + 1)
+    return f"image_{image_id} done, total={total:.2f}"
 
 
-# ==================== 示例1：基本的多进程使用 ====================
-def example1_basic_multiprocessing():
-    """
-    基本的多进程使用 - 使用Process类
-    """
+def example_image_processing(num_images: int, image_size: int) -> None:
     print("=" * 50)
-    print("示例1：基本的多进程使用")
+    print("示例 1：批量图像处理（模拟，无文件 IO）")
     print("=" * 50)
-    
+
+    image_ids = list(range(1, num_images + 1))
+
     # 单进程
     start = time.time()
-    result1 = find_primes_in_range(10000, 10100)
-    result2 = find_primes_in_range(10100, 10200)
+    # 注意：这里 size 越大，单个任务越"重"，多进程越容易体现优势
+    single_results = [fake_image_process(img_id, size=image_size) for img_id in image_ids]
     single_time = time.time() - start
-    print(f"单进程耗时: {single_time:.3f}秒")
-    
-    # 多进程
+    print(f"单进程处理 {len(image_ids)} 张图片耗时: {single_time:.3f} 秒")
+
+    # 多进程（进程池）
+    pool_workers = cpu_count()
+    pool_workers = max(1, min(pool_workers, len(image_ids)))  # 防止进程数大于任务数
+
     start = time.time()
-    p1 = Process(target=find_primes_in_range, args=(10000, 10100))
-    p2 = Process(target=find_primes_in_range, args=(10100, 10200))
-    
-    p1.start()
-    p2.start()
-    
-    p1.join()
-    p2.join()
-    
+    with ProcessPoolExecutor(max_workers=pool_workers) as executor:
+        futures = [
+            executor.submit(fake_image_process, img_id, image_size)
+            for img_id in image_ids
+        ]
+        multi_results = [future.result() for future in futures]
     multi_time = time.time() - start
-    print(f"多进程耗时: {multi_time:.3f}秒")
+    print(f"多进程处理 {len(image_ids)} 张图片耗时: {multi_time:.3f} 秒")
     print(f"加速比: {single_time / multi_time:.2f}x")
-    print()
 
 
-# ==================== 示例2：使用进程池（推荐） ====================
-def example2_process_pool():
+# ==================== 场景 2：处理很大的 jsonl 数据（模拟） ====================
+def fake_jsonl_record(index: int, values_length: int = 10000) -> str:
     """
-    使用进程池 - Pool（推荐方式）
-    自动管理进程数量，避免创建过多进程
+    构造一条 jsonl 的"行字符串"（这里只是模拟，实际不用写入文件）
+    
+    Args:
+        index: 记录索引
+        values_length: values 数组的长度，越大计算越重
     """
+    data = {
+        "id": index,
+        "text": "hello world " * 20,
+        # values 越长，单条记录的计算越"重"，多进程越容易体现优势
+        "values": list(range(values_length)),  # 模拟一长串数值
+    }
+    return json.dumps(data, ensure_ascii=False)
+
+
+def heavy_parse_and_compute(line: str) -> float:
+    """
+    模拟对一条 jsonl 记录做“重解析 + 特征计算”：
+    - json.loads：模拟解析 json
+    - 遍历 values 做一堆数学运算
+    """
+    obj = json.loads(line)
+    s = 0.0
+    for v in obj["values"]:
+        s += math.sqrt(v + 1) * math.sin(v)
+    return s
+
+
+def example_big_jsonl_processing(num_records: int, values_length: int) -> None:
     print("=" * 50)
-    print("示例2：使用进程池处理大量任务")
+    print("示例 2：处理很大的 jsonl 数据（模拟，无文件 IO）")
     print("=" * 50)
-    
-    # 准备任务：判断100个大数是否为素数
-    numbers = [112272535095293] * 20  # 一个大素数，重复20次
-    
+
+    jsonl_lines = [fake_jsonl_record(i, values_length=values_length) for i in range(num_records)]
+    tasks = jsonl_lines
+
     # 单进程处理
     start = time.time()
-    results_single = [is_prime(n) for n in numbers]
+    single_results = []
+    for line in tqdm(jsonl_lines, total=len(jsonl_lines), desc="单进程处理 jsonl 记录"):
+        single_results.append(heavy_parse_and_compute(line))
     single_time = time.time() - start
-    print(f"单进程处理 {len(numbers)} 个大数: {single_time:.3f}秒")
-    
-    # 多进程池处理
-    start = time.time()
-    with Pool(processes=cpu_count()) as pool:
-        results_multi = pool.map(is_prime, numbers)
-    multi_time = time.time() - start
-    print(f"多进程处理 {len(numbers)} 个大数: {multi_time:.3f}秒")
-    print(f"使用 {cpu_count()} 个进程，加速比: {single_time / multi_time:.2f}x")
-    print()
+    print(f"单进程处理 {len(jsonl_lines)} 条 jsonl 记录耗时: {single_time:.3f} 秒")
 
+    # 多进程处理（使用 submit + as_completed + tqdm，可以一边计算一边更新进度条）
+    pool_workers = cpu_count()
+    pool_workers = max(1, min(pool_workers, len(tasks)))  # 防止进程数大于任务数
 
-# ==================== 示例3：实际应用 - 批量图像处理 ====================
-def example3_image_processing():
-    """
-    实际应用：批量图像处理
-    模拟对多张图片进行CPU密集型处理
-    """
-    print("=" * 50)
-    print("示例3：批量图像处理（模拟）")
-    print("=" * 50)
-    
-    image_ids = list(range(1, 9))  # 8张图片
-    
-    # 单进程处理
     start = time.time()
-    results_single = []
-    for img_id in image_ids:
-        result = process_image_task(img_id, size=800)
-        results_single.append(result)
-    single_time = time.time() - start
-    print(f"单进程处理 {len(image_ids)} 张图片: {single_time:.3f}秒")
-    
-    # 多进程处理
-    start = time.time()
-    with Pool(processes=cpu_count()) as pool:
-        # 使用starmap传递多个参数
-        args = [(img_id, 800) for img_id in image_ids]
-        results_multi = pool.starmap(process_image_task, args)
+    with ProcessPoolExecutor(max_workers=pool_workers) as executor:
+        futures = {
+            executor.submit(heavy_parse_and_compute, line): line
+            for line in tasks
+        }
+        multi_results = []
+
+        for future in tqdm(
+            as_completed(futures),
+            total=len(futures),
+            desc="处理 jsonl 记录",
+        ):
+            multi_results.append(future.result())
     multi_time = time.time() - start
-    print(f"多进程处理 {len(image_ids)} 张图片: {multi_time:.3f}秒")
+    print(f"多进程处理 {len(tasks)} 条 jsonl 记录耗时: {multi_time:.3f} 秒")
     print(f"加速比: {single_time / multi_time:.2f}x")
-    
-    # 显示部分结果
-    print("\n处理结果示例：")
-    for result in results_multi[:3]:
-        print(f"  {result}")
-    print()
-
-
-# ==================== 示例4：进程间通信 ====================
-def worker_with_return(num, return_dict, process_id):
-    """
-    带返回值的worker函数
-    使用字典在进程间传递数据
-    """
-    result = is_prime(num)
-    return_dict[process_id] = (num, result)
-
-
-def example4_process_communication():
-    """
-    进程间通信示例
-    使用Manager来共享数据
-    """
-    print("=" * 50)
-    print("示例4：进程间通信")
-    print("=" * 50)
-    
-    from multiprocessing import Manager
-    
-    numbers = [17, 19, 21, 23, 25, 27, 29, 31]
-    
-    manager = Manager()
-    return_dict = manager.dict()
-    
-    processes = []
-    for i, num in enumerate(numbers):
-        p = Process(target=worker_with_return, args=(num, return_dict, i))
-        processes.append(p)
-        p.start()
-    
-    for p in processes:
-        p.join()
-    
-    print("素数判断结果：")
-    for i in range(len(numbers)):
-        num, is_prime_result = return_dict[i]
-        print(f"  {num} 是素数: {is_prime_result}")
-    print()
-
-
-# ==================== 最佳实践建议 ====================
-def show_best_practices():
-    """
-    显示多进程使用的最佳实践
-    """
-    print("=" * 50)
-    print("多进程最佳实践")
-    print("=" * 50)
-    print("""
-1. 何时使用多进程：
-   - CPU密集型任务（计算、加密、图像处理）
-   - 需要真正的并行计算
-   - 任务之间相对独立
-
-2. 推荐使用进程池（Pool）：
-   - 自动管理进程数量
-   - 避免创建过多进程
-   - 进程数通常设置为 CPU 核心数
-
-3. 注意事项：
-   - 进程间通信有开销，避免频繁通信
-   - 数据序列化有成本，避免传递大对象
-   - Windows 下需要使用 if __name__ == '__main__'
-   - 进程启动有开销，适合长时间运行的任务
-
-4. 当前系统信息：
-   - CPU 核心数: {}
-   - 推荐进程池大小: {}
-""".format(cpu_count(), cpu_count()))
 
 
 def main():
-    """
-    主函数：运行所有示例
-    """
     print("\n" + "=" * 50)
     print("Python 多进程编程示例")
-    print("适用于 CPU 密集型任务")
     print("=" * 50 + "\n")
-    
-    # 运行各个示例
-    example1_basic_multiprocessing()
-    example2_process_pool()
-    example3_image_processing()
-    example4_process_communication()
-    show_best_practices()
-    
+
+    # 计算规模设置
+    num_images = 50          # 图像数量
+    image_size = 900         # 图像尺寸（size x size）
+    num_records = 10000      # jsonl 记录总数
+    values_length = 10000    # 每条 jsonl 中 values 的长度
+
+    example_image_processing(num_images=num_images, image_size=image_size)
+    example_big_jsonl_processing(num_records=num_records, values_length=values_length)
+
     print("=" * 50)
-    print("所有示例运行完成！")
+    print("示例运行完成")
     print("=" * 50)
 
 
-if __name__ == '__main__':
-    # Windows 下必须使用这个保护
+if __name__ == "__main__":
     main()

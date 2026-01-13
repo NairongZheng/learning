@@ -1,3 +1,21 @@
+- [Python 并发编程教学](#python-并发编程教学)
+  - [目录结构](#目录结构)
+  - [如何判断任务类型](#如何判断任务类型)
+    - [CPU密集型任务（CPU-bound）](#cpu密集型任务cpu-bound)
+    - [I/O密集型任务（I/O-bound）](#io密集型任务io-bound)
+  - [如何选择并发实现方式](#如何选择并发实现方式)
+    - [决策流程图](#决策流程图)
+    - [详细对比](#详细对比)
+  - [代码示例](#代码示例)
+    - [多进程（multiprocessing）](#多进程multiprocessing)
+    - [多线程（threading）](#多线程threading)
+    - [多协程（asyncio）](#多协程asyncio)
+    - [混合并发（进程池 + 线程池）](#混合并发进程池--线程池)
+  - [Python GIL（全局解释器锁）说明](#python-gil全局解释器锁说明)
+  - [性能优化建议](#性能优化建议)
+  - [参考资源](#参考资源)
+
+
 # Python 并发编程教学
 
 本文件夹包含 Python 中多进程、多线程、多协程的教学示例和说明。
@@ -73,44 +91,86 @@
 | **数据共享** | 需要IPC机制 | 简单（但需加锁） | 简单（无需加锁） |
 | **典型库** | multiprocessing | threading, concurrent.futures | asyncio, aiohttp |
 
-## 实际应用场景举例
+## 代码示例
 
-### 场景1：文件路径读取与JSON处理
-**问题描述**：某文件中存放大量文件路径，需要读取每个文件、json.load解析、处理后保存。
+### 多进程（multiprocessing）
 
-**分析**：
-- 读取文件：I/O操作
-- json.load：CPU操作（较轻量）
-- 保存文件：I/O操作
+```python
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from multiprocessing import cpu_count
 
-**推荐方案**：
-1. **优先选择**：多线程（threading）- 平衡了I/O处理和编程复杂度
-2. **高并发场景**：协程（asyncio + aiofiles）- 如果文件数量巨大（10000+）
-3. **不推荐**：多进程 - I/O操作不受GIL影响，多进程开销大
+def cpu_task(data):
+    # CPU密集型任务
+    return sum(i**2 for i in range(data))
 
-参考代码：`04_hybrid.py` 中的文件处理示例
+# 方式1：使用 map（简单直接）
+tasks = [10000, 20000, 30000]
+with ProcessPoolExecutor(max_workers=cpu_count()) as executor:
+    futures = {executor.submit(cpu_task, task): task for task in tasks}
+    results = []
+    for future in as_completed(futures):
+        results.append(future.result())
+```
 
-### 场景2：网络爬虫
-**推荐**：协程（asyncio + aiohttp）
-- 大量HTTP请求
-- 网络等待时间长
-- 协程可以实现高并发
+### 多线程（threading）
 
-参考代码：`03_asyncio.py`
+```python
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-### 场景3：图像批处理
-**推荐**：多进程（multiprocessing）
-- CPU密集的图像处理算法
-- 充分利用多核CPU
+def io_task(url):
+    # I/O密集型任务（如网络请求）
+    time.sleep(0.1)  # 模拟I/O等待
+    return f"Result from {url}"
 
-参考代码：`01_multiprocessing.py`
+# 使用线程池
+urls = ["url1", "url2", "url3"]
+with ThreadPoolExecutor(max_workers=10) as executor:
+    futures = {executor.submit(io_task, url): url for url in urls}
+    results = []
+    for future in as_completed(futures):
+        results.append(future.result())
+```
 
-### 场景4：Web服务器
-**推荐**：混合模式
-- 多进程：启动多个worker进程
-- 每个进程内使用协程：处理大量并发请求
+### 多协程（asyncio）
 
-参考代码：`04_hybrid.py` 中的Web服务示例
+```python
+import asyncio
+
+async def async_io_task(url):
+    # 异步I/O任务
+    await asyncio.sleep(0.1)  # 模拟I/O等待
+    return f"Result from {url}"
+
+# 并发执行协程
+urls = ["url1", "url2", "url3"]
+tasks = [async_io_task(url) for url in urls]
+results = await asyncio.gather(*tasks)
+```
+
+### 混合并发（进程池 + 线程池）
+
+```python
+import time
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from multiprocessing import cpu_count
+
+def io_task(item):
+    # I/O密集型任务
+    time.sleep(0.1)
+    return f"Processed {item}"
+
+def process_batch(batch):
+    # 在进程中使用线程池
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        results = list(executor.map(io_task, batch))
+    return results
+
+# 使用进程池处理不同批次
+batches = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+with ProcessPoolExecutor(max_workers=cpu_count()) as executor:
+    results = list(executor.map(process_batch, batches))
+```
 
 ## Python GIL（全局解释器锁）说明
 
@@ -133,24 +193,7 @@
 
 ## 参考资源
 
-- [Python并发编程实战](https://www.bilibili.com/video/BV1bK411A7tV)
 - [Python官方文档 - threading](https://docs.python.org/zh-cn/3/library/threading.html)
 - [Python官方文档 - multiprocessing](https://docs.python.org/zh-cn/3/library/multiprocessing.html)
 - [Python官方文档 - asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
 
-## 快速开始
-
-运行示例代码：
-```bash
-# 多进程示例
-python 01_multiprocessing.py
-
-# 多线程示例
-python 02_multithreading.py
-
-# 多协程示例
-python 03_asyncio.py
-
-# 混合示例
-python 04_hybrid.py
-```

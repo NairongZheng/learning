@@ -1,454 +1,222 @@
 """
-混合并发示例 - 组合多种并发方式
+混合并发示例
 
-适用场景：
-- 复杂的应用场景，需要同时处理CPU密集和I/O密集任务
-- 需要充分利用系统资源
-- 大型应用架构
-
-示例任务：
-1. 进程池 + 线程池：每个进程内使用多线程
-2. 进程池 + 协程：每个进程内使用协程
-3. 实际应用：文件批处理（读取文件 + 复杂计算）
+两个最常见的混合场景：
+- 进程池 + 线程池：适合 CPU + I/O 混合任务
+- 进程池 + 协程：适合高并发 I/O 任务
 """
 
 import asyncio
-import time
-import json
 import math
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+import time
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from multiprocessing import cpu_count
-from typing import List
+from tqdm import tqdm
 
 
-# ==================== 辅助函数 ====================
-def cpu_intensive_task(n):
+# ==================== 场景 1：进程池 + 线程池（CPU + I/O 混合） ====================
+def io_and_cpu_task(file_id: int, io_delay: float = 0.1, compute_size: int = 50000) -> dict:
     """
-    CPU密集型任务：计算
+    模拟混合任务：I/O（读取文件）+ CPU（复杂计算）
     """
-    result = 0
-    for i in range(n):
-        result += math.sqrt(i)
-    return result
-
-
-def io_intensive_task(task_id, duration=0.2):
-    """
-    I/O密集型任务：模拟文件读取
-    """
-    time.sleep(duration)
-    return f"I/O task {task_id} completed"
-
-
-async def async_io_task(task_id, duration=0.2):
-    """
-    异步I/O任务
-    """
-    await asyncio.sleep(duration)
-    return f"Async I/O task {task_id} completed"
-
-
-# ==================== 示例1：进程池 + 线程池 ====================
-def process_with_threads(process_id, n_threads=5):
-    """
-    在进程中使用线程池处理I/O任务
-    """
-    print(f"进程 {process_id} 启动，使用 {n_threads} 个线程")
+    # 模拟 I/O 操作（文件读取）
+    time.sleep(io_delay)
     
-    # 在这个进程中，使用线程池处理I/O任务
-    with ThreadPoolExecutor(max_workers=n_threads) as executor:
-        tasks = [(process_id, i) for i in range(n_threads)]
-        results = list(executor.map(
-            lambda x: io_intensive_task(f"P{x[0]}-T{x[1]}", 0.3),
-            tasks
-        ))
-    
-    print(f"进程 {process_id} 完成")
-    return f"Process {process_id}: {len(results)} tasks completed"
-
-
-def example1_process_plus_thread():
-    """
-    示例1：进程池 + 线程池
-    适用场景：多个独立任务，每个任务内部有多个I/O操作
-    """
-    print("=" * 50)
-    print("示例1：进程池 + 线程池")
-    print("=" * 50)
-    print("场景：多个独立的任务组，每组内有多个I/O操作\n")
-    
-    n_processes = 4
-    
-    start = time.time()
-    
-    with ProcessPoolExecutor(max_workers=n_processes) as executor:
-        futures = [
-            executor.submit(process_with_threads, i, 5)
-            for i in range(n_processes)
-        ]
-        
-        results = [future.result() for future in futures]
-    
-    elapsed = time.time() - start
-    
-    print(f"\n完成时间: {elapsed:.3f}秒")
-    print(f"总任务数: {n_processes} 个进程 × 5 个线程 = {n_processes * 5} 个任务")
-    print("\n结果：")
-    for result in results:
-        print(f"  {result}")
-    print()
-
-
-# ==================== 示例2：进程池 + 协程 ====================
-def process_with_coroutines(process_id, n_tasks=10):
-    """
-    在进程中使用协程处理大量I/O任务
-    """
-    print(f"进程 {process_id} 启动，处理 {n_tasks} 个协程任务")
-    
-    async def run_async_tasks():
-        tasks = [async_io_task(f"P{process_id}-C{i}", 0.2) for i in range(n_tasks)]
-        results = await asyncio.gather(*tasks)
-        return results
-    
-    # 在进程中运行协程
-    results = asyncio.run(run_async_tasks())
-    
-    print(f"进程 {process_id} 完成")
-    return f"Process {process_id}: {len(results)} async tasks completed"
-
-
-def example2_process_plus_coroutine():
-    """
-    示例2：进程池 + 协程
-    适用场景：需要多进程隔离，但每个进程需要处理大量I/O
-    """
-    print("=" * 50)
-    print("示例2：进程池 + 协程")
-    print("=" * 50)
-    print("场景：多个独立进程，每个进程内有大量并发I/O操作\n")
-    
-    n_processes = 3
-    
-    start = time.time()
-    
-    with ProcessPoolExecutor(max_workers=n_processes) as executor:
-        futures = [
-            executor.submit(process_with_coroutines, i, 15)
-            for i in range(n_processes)
-        ]
-        
-        results = [future.result() for future in futures]
-    
-    elapsed = time.time() - start
-    
-    print(f"\n完成时间: {elapsed:.3f}秒")
-    print(f"总任务数: {n_processes} 个进程 × 15 个协程 = {n_processes * 15} 个任务")
-    print("\n结果：")
-    for result in results:
-        print(f"  {result}")
-    print()
-
-
-# ==================== 示例3：实际应用 - 文件批处理 ====================
-def read_and_process_file(filepath):
-    """
-    读取文件并进行CPU密集型处理
-    """
-    # 模拟读取文件（I/O操作）
-    time.sleep(0.1)
-    data = {"file": filepath, "numbers": list(range(100000))}
-    
-    # CPU密集型处理
-    result = sum(math.sqrt(x) for x in data["numbers"])
+    # 模拟 CPU 密集型计算
+    result = sum(math.sqrt(i) for i in range(compute_size))
     
     return {
-        "file": filepath,
+        "file_id": file_id,
         "result": result,
-        "count": len(data["numbers"])
+        "processed": True,
     }
 
 
-def process_file_batch(file_batch):
+def process_batch_with_threads(batch_id: int, file_ids: list, io_delay: float, compute_size: int) -> list:
     """
-    使用线程池处理一批文件（在单个进程中）
+    在单个进程中使用线程池处理一批文件
     """
-    batch_id = file_batch[0].split('_')[1].split('/')[0]
-    print(f"  批次 {batch_id} 开始处理...")
+    # 在这个进程中，使用线程池并发处理 I/O + CPU 任务
+    with ThreadPoolExecutor(max_workers=min(10, len(file_ids))) as executor:
+        tasks = [
+            executor.submit(io_and_cpu_task, file_id, io_delay, compute_size)
+            for file_id in file_ids
+        ]
+        results = [future.result() for future in tasks]
     
-    # 使用线程池并发读取文件
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        results = list(executor.map(read_and_process_file, file_batch))
-    
-    print(f"  批次 {batch_id} 完成")
     return results
 
 
-def example3_file_processing_pipeline():
-    """
-    示例3：文件批处理流水线
-    场景：大量文件需要读取（I/O）+ 复杂计算（CPU）
-    
-    策略：
-    1. 将文件分批
-    2. 使用进程池处理不同批次（利用多核处理CPU任务）
-    3. 每个进程内使用线程池并发读取文件（加速I/O）
-    """
+def example_process_plus_thread(num_files: int, batch_size: int, io_delay: float, compute_size: int) -> None:
     print("=" * 50)
-    print("示例3：文件批处理流水线")
+    print("示例 1：进程池 + 线程池（CPU + I/O 混合）")
     print("=" * 50)
-    print("场景：大量文件需要读取并进行复杂计算\n")
-    
-    # 生成文件列表
-    all_files = [f"/data/batch_{i//10}/file_{i}.json" for i in range(40)]
-    
-    # 分批：每批10个文件
-    batch_size = 10
-    file_batches = [
-        all_files[i:i+batch_size]
-        for i in range(0, len(all_files), batch_size)
+
+    # 将文件分批
+    file_ids = list(range(1, num_files + 1))
+    batches = [
+        file_ids[i : i + batch_size] for i in range(0, len(file_ids), batch_size)
     ]
-    
-    print(f"总文件数: {len(all_files)}")
-    print(f"分为 {len(file_batches)} 批，每批 {batch_size} 个文件")
-    print(f"使用 {cpu_count()} 个进程处理\n")
-    
-    # 方式1：单进程单线程（基准）
+
+    print(f"总文件数: {num_files}")
+    print(f"分为 {len(batches)} 批，每批约 {batch_size} 个文件")
+    print(f"使用 {cpu_count()} 个进程，每个进程内使用线程池\n")
+
+    # 单进程单线程（基准）
     start = time.time()
-    results_baseline = []
-    for filepath in all_files[:10]:  # 只测试10个文件
-        result = read_and_process_file(filepath)
-        results_baseline.append(result)
+    baseline_results = []
+    for file_id in tqdm(file_ids[:10], desc="基准（单进程单线程）"):
+        result = io_and_cpu_task(file_id, io_delay, compute_size)
+        baseline_results.append(result)
     baseline_time = time.time() - start
-    print(f"基准（单进程单线程处理10个文件）: {baseline_time:.3f}秒\n")
-    
-    # 方式2：混合模式（进程池 + 线程池）
+    print(f"基准耗时: {baseline_time:.3f} 秒（处理 10 个文件）\n")
+
+    # 混合模式：进程池 + 线程池
     start = time.time()
-    
-    with ProcessPoolExecutor(max_workers=cpu_count()) as executor:
-        # 每个进程处理一批文件，进程内使用线程池
-        batch_results = list(executor.map(process_file_batch, file_batches))
-    
-    # 展平结果
-    all_results = [result for batch in batch_results for result in batch]
-    
-    hybrid_time = time.time() - start
-    
-    print(f"\n混合模式完成时间: {hybrid_time:.3f}秒")
-    print(f"估算的加速比: {(baseline_time * 4) / hybrid_time:.2f}x")
-    print(f"处理文件总数: {len(all_results)}")
-    
-    # 显示部分结果
-    print("\n处理结果示例：")
-    for result in all_results[:3]:
-        print(f"  {result['file']}: 计算结果={result['result']:.2f}, 数据量={result['count']}")
-    print()
+    n_processes = min(cpu_count(), len(batches))
+    n_processes = max(1, n_processes)  # 至少1个进程
 
-
-# ==================== 示例4：Web服务器模式 ====================
-async def handle_request(request_id):
-    """
-    处理Web请求（模拟）
-    包含I/O操作（数据库查询、API调用等）
-    """
-    # 模拟数据库查询
-    await asyncio.sleep(0.1)
-    
-    # 模拟业务逻辑
-    await asyncio.sleep(0.05)
-    
-    return f"Response for request {request_id}"
-
-
-def run_async_server(worker_id, n_requests):
-    """
-    在一个worker进程中运行异步服务器
-    """
-    print(f"Worker {worker_id} 启动")
-    
-    async def handle_all_requests():
-        tasks = [handle_request(f"W{worker_id}-R{i}") for i in range(n_requests)]
-        results = await asyncio.gather(*tasks)
-        return results
-    
-    results = asyncio.run(handle_all_requests())
-    print(f"Worker {worker_id} 完成")
-    return len(results)
-
-
-def example4_web_server_pattern():
-    """
-    示例4：Web服务器模式
-    
-    架构：
-    - 多个worker进程（利用多核，隔离故障）
-    - 每个worker使用协程处理大量并发请求
-    
-    类似于：gunicorn + asyncio, uvicorn workers等
-    """
-    print("=" * 50)
-    print("示例4：Web服务器模式")
-    print("=" * 50)
-    print("架构：多进程 Worker + 协程处理请求\n")
-    
-    n_workers = 4
-    requests_per_worker = 50
-    
-    print(f"启动 {n_workers} 个 worker 进程")
-    print(f"每个 worker 处理 {requests_per_worker} 个请求")
-    print(f"总请求数: {n_workers * requests_per_worker}\n")
-    
-    start = time.time()
-    
-    with ProcessPoolExecutor(max_workers=n_workers) as executor:
-        futures = [
-            executor.submit(run_async_server, i, requests_per_worker)
-            for i in range(n_workers)
-        ]
-        
-        results = [future.result() for future in futures]
-    
-    elapsed = time.time() - start
-    
-    print(f"\n完成时间: {elapsed:.3f}秒")
-    print(f"总处理请求数: {sum(results)}")
-    print(f"吞吐量: {sum(results) / elapsed:.2f} 请求/秒")
-    print()
-
-
-# ==================== 示例5：决策流程示例 ====================
-def example5_decision_making():
-    """
-    示例5：如何选择合适的并发策略
-    """
-    print("=" * 50)
-    print("示例5：并发策略选择指南")
-    print("=" * 50)
-    
-    scenarios = [
-        {
-            "name": "图像批处理",
-            "cpu_intensive": True,
-            "io_intensive": False,
-            "concurrency_level": "中",
-            "recommendation": "多进程（ProcessPoolExecutor）",
-            "reason": "CPU密集型，需要绕过GIL，利用多核"
-        },
-        {
-            "name": "网络爬虫",
-            "cpu_intensive": False,
-            "io_intensive": True,
-            "concurrency_level": "高（1000+）",
-            "recommendation": "协程（asyncio + aiohttp）",
-            "reason": "I/O密集型，大量并发，协程内存占用小"
-        },
-        {
-            "name": "文件批量读取",
-            "cpu_intensive": False,
-            "io_intensive": True,
-            "concurrency_level": "中（100-500）",
-            "recommendation": "多线程（ThreadPoolExecutor）",
-            "reason": "I/O密集型，中等并发，编程简单"
-        },
-        {
-            "name": "文件读取+复杂计算",
-            "cpu_intensive": True,
-            "io_intensive": True,
-            "concurrency_level": "高",
-            "recommendation": "进程池 + 线程池",
-            "reason": "混合任务，进程处理CPU，线程处理I/O"
-        },
-        {
-            "name": "Web API服务器",
-            "cpu_intensive": False,
-            "io_intensive": True,
-            "concurrency_level": "极高（10000+）",
-            "recommendation": "多进程 + 协程",
-            "reason": "多进程隔离故障，协程处理高并发"
-        },
-        {
-            "name": "数据ETL流水线",
-            "cpu_intensive": True,
-            "io_intensive": True,
-            "concurrency_level": "高",
-            "recommendation": "进程池 + 线程池/协程",
-            "reason": "提取(I/O)、转换(CPU)、加载(I/O)混合"
+    with ProcessPoolExecutor(max_workers=n_processes) as executor:
+        futures = {
+            executor.submit(
+                process_batch_with_threads, i, batch, io_delay, compute_size
+            ): i
+            for i, batch in enumerate(batches)
         }
+        all_results = []
+
+        for future in tqdm(
+            as_completed(futures),
+            total=len(futures),
+            desc="混合模式（进程池+线程池）",
+        ):
+            batch_results = future.result()
+            all_results.extend(batch_results)
+
+    hybrid_time = time.time() - start
+    print(f"混合模式耗时: {hybrid_time:.3f} 秒（处理 {len(all_results)} 个文件）")
+    print(f"估算加速比: {(baseline_time * (num_files / 10)) / hybrid_time:.2f}x")
+
+
+# ==================== 场景 2：进程池 + 协程（高并发 I/O） ====================
+async def async_io_task(task_id: int, delay: float = 0.1) -> dict:
+    """
+    模拟异步 I/O 任务（API 调用、数据库查询等）
+    """
+    await asyncio.sleep(delay)  # 模拟 I/O 等待
+    return {
+        "task_id": task_id,
+        "status": "completed",
+        "result": f"Task {task_id} done",
+    }
+
+
+def process_with_coroutines(worker_id: int, task_ids: list, delay: float) -> int:
+    """
+    在单个进程中使用协程处理大量 I/O 任务
+    """
+    async def run_async_tasks():
+        tasks = [async_io_task(task_id, delay) for task_id in task_ids]
+        results = await asyncio.gather(*tasks)
+        return len(results)
+
+    # 在进程中运行协程
+    count = asyncio.run(run_async_tasks())
+    return count
+
+
+def example_process_plus_coroutine(
+    num_tasks: int, tasks_per_worker: int, io_delay: float
+) -> None:
+    print("=" * 50)
+    print("示例 2：进程池 + 协程（高并发 I/O）")
+    print("=" * 50)
+
+    # 将任务分配给多个 worker
+    task_ids = list(range(1, num_tasks + 1))
+    worker_batches = [
+        task_ids[i : i + tasks_per_worker]
+        for i in range(0, len(task_ids), tasks_per_worker)
     ]
-    
-    print("\n场景分析：\n")
-    for i, scenario in enumerate(scenarios, 1):
-        print(f"{i}. {scenario['name']}")
-        print(f"   CPU密集: {'是' if scenario['cpu_intensive'] else '否'}, "
-              f"I/O密集: {'是' if scenario['io_intensive'] else '否'}, "
-              f"并发量: {scenario['concurrency_level']}")
-        print(f"   推荐方案: {scenario['recommendation']}")
-        print(f"   原因: {scenario['reason']}")
-        print()
+
+    print(f"总任务数: {num_tasks}")
+    print(f"分为 {len(worker_batches)} 个 worker，每个 worker 约 {tasks_per_worker} 个任务")
+    print(f"使用 {cpu_count()} 个进程，每个进程内使用协程\n")
+
+    # 顺序执行（基准）
+    start = time.time()
+    sequential_results = []
+    for task_id in tqdm(task_ids[:20], desc="基准（顺序执行）"):
+        # 模拟顺序执行（在协程中顺序等待）
+        async def sequential_task():
+            await async_io_task(task_id, io_delay)
+
+        asyncio.run(sequential_task())
+        sequential_results.append(task_id)
+    sequential_time = time.time() - start
+    print(f"基准耗时: {sequential_time:.3f} 秒（处理 20 个任务）\n")
+
+    # 混合模式：进程池 + 协程
+    start = time.time()
+    n_workers = min(cpu_count(), len(worker_batches))
+    n_workers = max(1, n_workers)  # 至少1个进程
+
+    with ProcessPoolExecutor(max_workers=n_workers) as executor:
+        futures = {
+            executor.submit(
+                process_with_coroutines, i, batch, io_delay
+            ): i
+            for i, batch in enumerate(worker_batches)
+        }
+        total_processed = 0
+
+        for future in tqdm(
+            as_completed(futures),
+            total=len(futures),
+            desc="混合模式（进程池+协程）",
+        ):
+            count = future.result()
+            total_processed += count
+
+    hybrid_time = time.time() - start
+    print(f"混合模式耗时: {hybrid_time:.3f} 秒（处理 {total_processed} 个任务）")
+    print(f"估算加速比: {(sequential_time * (num_tasks / 20)) / hybrid_time:.2f}x")
 
 
-# ==================== 最佳实践 ====================
-def show_best_practices():
-    """
-    混合并发的最佳实践
-    """
-    print("=" * 50)
-    print("混合并发最佳实践")
-    print("=" * 50)
-    print("""
-1. 选择策略原则：
-   - 纯CPU密集：多进程
-   - 纯I/O密集（低并发）：多线程
-   - 纯I/O密集（高并发）：协程
-   - CPU + I/O混合：组合使用
-
-2. 常见组合模式：
-   - 进程池 + 线程池：适合批处理，中等并发
-   - 进程池 + 协程：适合高并发I/O + 进程隔离
-   - 线程池 + 协程：较少使用，通常直接用协程
-
-3. 架构设计建议：
-   - 按任务类型分层处理
-   - 合理控制并发数量
-   - 考虑资源限制（内存、连接数）
-   - 使用监控了解瓶颈
-
-4. 性能优化：
-   - 先profile找瓶颈
-   - 避免过度并发
-   - 注意进程/线程创建开销
-   - 使用池化技术
-
-5. 注意事项：
-   - 进程间通信有开销
-   - 数据序列化成本
-   - 线程安全问题
-   - 异步代码的调试难度
-""")
-
-
-# ==================== 主函数 ====================
 def main():
-    """
-    主函数：运行所有示例
-    """
     print("\n" + "=" * 50)
     print("Python 混合并发编程示例")
     print("组合使用多种并发方式")
     print("=" * 50 + "\n")
-    
-    # 运行各个示例
-    example1_process_plus_thread()
-    example2_process_plus_coroutine()
-    example3_file_processing_pipeline()
-    example4_web_server_pattern()
-    example5_decision_making()
-    show_best_practices()
-    
+
+    # 计算规模设置
+    # 场景1：进程池 + 线程池
+    num_files = 40  # 文件总数
+    batch_size = 10  # 每批文件数
+    io_delay = 0.1  # I/O 延迟（秒）
+    compute_size = 50000  # CPU 计算规模
+
+    # 场景2：进程池 + 协程
+    num_tasks = 200  # 总任务数
+    tasks_per_worker = 50  # 每个 worker 处理的任务数
+    io_delay_async = 0.05  # I/O 延迟（秒）
+
+    example_process_plus_thread(
+        num_files=num_files,
+        batch_size=batch_size,
+        io_delay=io_delay,
+        compute_size=compute_size,
+    )
+    example_process_plus_coroutine(
+        num_tasks=num_tasks,
+        tasks_per_worker=tasks_per_worker,
+        io_delay=io_delay_async,
+    )
+
     print("=" * 50)
-    print("所有示例运行完成！")
+    print("示例运行完成")
     print("=" * 50)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
