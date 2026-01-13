@@ -23,6 +23,7 @@ def is_prime(n):
     for i in range(3, squrt_n + 1, 2):
         if n % i == 0:
             return False
+    return True
 
 
 def single_thread():
